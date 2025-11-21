@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+option(RENDERTOY_ENABLE_TEST "Enable Tests" ON)
+
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
@@ -25,5 +27,23 @@ endif()
 
 include(cmake/sanitizer.cmake)
 
+if(RENDERTOY_ENABLE_TEST)
+    find_package(GTest QUIET)
+    if(NOT gtest_FOUND)
+        FetchContent_Declare(
+            GTest
+            GIT_REPOSITORY "https://github.com/google/googletest.git"
+            GIT_TAG "v1.17.0"
+            GIT_SHALLOW TRUE
+            GIT_PROGRESS TRUE
+        )
+        FetchContent_MakeAvailable(GTest)
+    endif()
+    include(CTest)
+    enable_testing()
+endif()
+
+add_subdirectory(Core)
 add_subdirectory(engine)
 add_subdirectory(samples)
+

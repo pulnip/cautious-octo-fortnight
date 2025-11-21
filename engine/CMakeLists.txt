@@ -5,11 +5,6 @@ PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
-target_link_libraries(RenderToyEngine
-PRIVATE
-    SDL3::SDL3
-)
-
 add_subdirectory(src)
 
 if(WIN32)

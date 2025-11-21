@@ -1,7 +1,13 @@
 target_sources(RenderToyEngine
 PRIVATE
     engine.cpp
-    Log/ConsoleSink.cpp
-    Log/Logger.cpp
-    Log/SDLSink.cpp
+)
+
+add_subdirectory(ECS)
+add_subdirectory(Log)
+
+target_link_libraries(RenderToyEngine
+PRIVATE
+    RenderToy::ECS
+    RenderToy::Log
 )
