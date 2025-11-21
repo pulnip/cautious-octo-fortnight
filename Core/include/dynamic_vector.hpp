@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <utility>
 #include "concepts.hpp"
+#include "primitives.hpp"
 #include "ptr_util.hpp"
 
 namespace RenderToy
@@ -95,12 +96,12 @@ namespace RenderToy
         private:
             void* const mem;
             const std::size_t CHUNK_SIZE;
-            std::size_t pos;
+            Index pos;
 
             friend const_iterator;
 
         public:
-            iterator(void* mem, std::size_t CHUNK_SIZE, std::size_t pos)
+            iterator(void* mem, std::size_t CHUNK_SIZE, Index pos)
             :mem(mem), CHUNK_SIZE(CHUNK_SIZE), pos(pos){}
             iterator(const iterator&) = default;
             iterator(iterator&&) = default;
@@ -139,12 +140,12 @@ namespace RenderToy
         private:
             void* mem;
             std::size_t CHUNK_SIZE;
-            std::size_t pos;
+            Index pos;
 
             friend iterator;
 
         public:
-            const_iterator(void* mem, std::size_t CHUNK_SIZE, std::size_t pos){}
+            const_iterator(void* mem, std::size_t CHUNK_SIZE, Index pos){}
             const_iterator(const const_iterator&) = default;
             const_iterator(const_iterator&&) = default;
             const_iterator& operator=(const const_iterator&) = default;
@@ -179,12 +180,12 @@ namespace RenderToy
             }
         };
 
-        void* operator[](std::size_t index){
+        void* operator[](Index index){
             assert(index < size_);
             assert(!(CHUNK_SIZE==0 && "CHUNK_SIZE==0, intentional crash"));
             return ptrAdd(mem, CHUNK_SIZE*index);
         }
-        const void* operator[](std::size_t index) const{
+        const void* operator[](Index index) const{
             assert(index < size_);
             assert(!(CHUNK_SIZE==0 && "CHUNK_SIZE==0, intentional crash"));
             return ptrAdd(mem, CHUNK_SIZE*index);
@@ -261,7 +262,7 @@ namespace RenderToy
             RenderToy::emplace(dst, std::forward<T>(t)...);
         }
 
-        void swap_remove(std::size_t index){
+        void swap_remove(Index index){
             assert(index < size_ && "swap_remove out of range");
             if(index < size_ - 1 && CHUNK_SIZE > 0)
                 memcpy((*this)[index], (*this)[size_-1], CHUNK_SIZE);

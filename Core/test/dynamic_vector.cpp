@@ -113,7 +113,7 @@ TEST(dynamic_vector, CompositeChunkMultipleElements){
     vec.emplace(3, 3.3f, 'i', 'j', 'k', 'l');
     ASSERT_EQ(vec.size(), 3u);
 
-    for (std::size_t idx = 0; idx < vec.size(); ++idx){
+    for(std::size_t idx = 0; idx < vec.size(); ++idx){
         void* raw = vec[idx];
         int expected_i = static_cast<int>(idx) + 1;
         float expected_f = expected_i * 1.1f;

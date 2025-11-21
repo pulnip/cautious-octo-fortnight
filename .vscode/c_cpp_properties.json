@@ -3,6 +3,7 @@
         {
             "name": "Mac",
             "includePath": [
+                "${workspaceFolder}/Core/include",
                 "${workspaceFolder}/engine/include",
                 "${workspaceFolder}/samples/demo/include"
             ],
@@ -16,6 +17,7 @@
         {
             "name": "Win32",
             "includePath": [
+                "${workspaceFolder}/Core/include",
                 "${workspaceFolder}/engine/include",
                 "${workspaceFolder}/samples/demo/include"
             ],

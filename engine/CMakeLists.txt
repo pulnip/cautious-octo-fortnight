@@ -20,3 +20,9 @@ elseif(APPLE)
         "-framework CoreVideo"
     )
 endif()
+
+add_library(RenderToy::Engine ALIAS RenderToyEngine)
+
+if(RENDERTOY_ENABLE_TEST)
+    add_subdirectory(test)
+endif()

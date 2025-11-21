@@ -7,6 +7,8 @@ add_subdirectory(ECS)
 add_subdirectory(Log)
 
 target_link_libraries(RenderToyEngine
+PUBLIC
+    RenderToy::Core
 PRIVATE
     RenderToy::ECS
     RenderToy::Log

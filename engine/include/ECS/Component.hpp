@@ -1,0 +1,287 @@
+#pragma once
+
+#include "concepts.hpp"
+#include "math.hpp"
+#include "Primitives.hpp"
+#include "ECS/Archetype.hpp"
+#include "ECS/Entity.hpp"
+
+namespace RenderToy
+{
+    #define DEFINE_COMPONENT(name, ...) \
+        struct name{ \
+            EntityID entity; \
+            bool isActive; \
+            __VA_ARGS__ \
+        }
+
+    DEFINE_COMPONENT(Transform,
+        DEFINE_TRANSFORM;
+    );
+    DEFINE_COMPONENT(Camera,
+        CameraType type;
+        float fov;
+        float nearPlane;
+        float farPlane;
+        Projection proj;
+    );
+    DEFINE_COMPONENT(Color,
+        Vec4 color;
+    );
+    DEFINE_COMPONENT(Mesh,
+        float alpha;
+        UUID mesh;
+        UUID materialSet;
+        ShaderHandle shaderHandle;
+    );
+    DEFINE_COMPONENT(ScriptObject,
+        ObjectHandle handle;
+    );
+    DEFINE_COMPONENT(Input,
+        bool isMoveEnabled;
+        bool isJumpEnabled;
+        bool isSkillEnabled;
+        ModuleHandle handle;
+    );
+    DEFINE_COMPONENT(LifeSpan,
+        bool isAlive;
+    );
+    DEFINE_COMPONENT(Rigidbody,
+        Vec3 velocity;
+        bool useGravity;
+        float mass;
+    );
+    enum class ElementType{
+        FIRE,
+        EARTH,
+        DENDRO,
+        WIND,
+        WATER,
+        ICE,
+        ELECTRIC
+    };
+    DEFINE_COMPONENT(Element,
+        ElementType type;
+    );
+    struct PhysicsMaterial{
+        float bounciness;
+        float friction;
+    };
+    DEFINE_COMPONENT(SphereCollider,
+        Vec3 position;
+        float radius;
+
+        PhysicsMaterial material;
+    );
+    DEFINE_COMPONENT(FixedBoxCollider,
+        Vec3 position;
+        Vec3 scale;
+
+        PhysicsMaterial material;
+    );
+    DEFINE_COMPONENT(BoxCollider,
+        DEFINE_TRANSFORM;
+        PhysicsMaterial material;
+    );
+
+    // Entity Type? Property? Tags (kept in Long-term)
+    DEFINE_COMPONENT(Player,);
+    DEFINE_COMPONENT(Editor,);
+    DEFINE_COMPONENT(Attachable,);
+    DEFINE_COMPONENT(Climbable,);
+    DEFINE_COMPONENT(Inventory,);
+    DEFINE_COMPONENT(Lootable,);
+    DEFINE_COMPONENT(LootMagnet,);
+
+    // Entity Temporal State Tags (kept in Short-term)
+    DEFINE_COMPONENT(Attached,
+        EntityID target;
+    );
+    DEFINE_COMPONENT(Climbed,
+        EntityID climbable;
+    );
+    DEFINE_COMPONENT(Collided,);
+    DEFINE_COMPONENT(Grounded,);
+    DEFINE_COMPONENT(Walked,);
+    DEFINE_COMPONENT(Ran,);
+
+    // Entity-to-Entity Event Tags
+    DEFINE_COMPONENT(PhysicalCollision,
+        Vec3 force;
+    );
+
+    #define ARCHETYPES \
+        X(       TRANSFORM) \
+        X(          CAMERA) \
+        X(           COLOR) \
+        X(            MESH) \
+        X(          SCRIPT) \
+        X(           INPUT) \
+        X(        LIFESPAN) \
+        X(       RIGIDBODY) \
+        X(         ELEMENT) \
+        X(  SPHERECOLLIDER) \
+        X(FIXEDBOXCOLLIDER) \
+        X(     BOXCOLLIDER) \
+        X(       COLLISION) \
+        X(        COLLIDED) \
+        X(          PLAYER) \
+        X(          EDITOR) \
+        X(      ATTACHABLE) \
+        X(       CLIMBABLE) \
+        X(       INVENTORY) \
+        X(        LOOTABLE) \
+        X(      LOOTMAGNET) \
+        X(        ATTACHED) \
+        X(         CLIMBED) \
+        X(        GROUNDED) \
+        X(          WALKED) \
+        X(             RAN)
+    #define ARCHETYPE_PAIRS \
+        X(        Transform,        TRANSFORM) \
+        X(           Camera,           CAMERA) \
+        X(            Color,            COLOR) \
+        X(             Mesh,             MESH) \
+        X(     ScriptObject,           SCRIPT) \
+        X(            Input,            INPUT) \
+        X(         LifeSpan,         LIFESPAN) \
+        X(        Rigidbody,        RIGIDBODY) \
+        X(          Element,          ELEMENT) \
+        X(   SphereCollider,   SPHERECOLLIDER) \
+        X( FixedBoxCollider, FIXEDBOXCOLLIDER) \
+        X(      BoxCollider,      BOXCOLLIDER) \
+        X(PhysicalCollision,        COLLISION) \
+        X(         Collided,         COLLIDED) \
+        X(           Player,           PLAYER) \
+        X(           Editor,           EDITOR) \
+        X(       Attachable,       ATTACHABLE) \
+        X(        Climbable,        CLIMBABLE) \
+        X(        Inventory,        INVENTORY) \
+        X(         Lootable,         LOOTABLE) \
+        X(       LootMagnet,       LOOTMAGNET) \
+        X(         Attached,         ATTACHED) \
+        X(          Climbed,          CLIMBED) \
+        X(         Grounded,         GROUNDED) \
+        X(           Walked,           WALKED) \
+        X(              Ran,              RAN)
+
+    #define ASSERT_TRIVIAL(type, name) static_assert(std::is_trivially_copyable_v<type>);
+    #define X ASSERT_TRIVIAL
+    ARCHETYPE_PAIRS
+    #undef X
+
+    enum{
+        #define NAME_INDEX(name) name##_INDEX,
+        #define X NAME_INDEX
+        ARCHETYPES
+        #undef X
+        NUM_ARCHETYPES
+    };
+
+    #define DECL_BIT(name) constexpr ArchetypeBit \
+        name##_BIT = (1 << name##_INDEX);
+    #define X DECL_BIT
+    ARCHETYPES
+    #undef X
+    constexpr auto VIEW_BIT    = TRANSFORM_BIT |    CAMERA_BIT;
+    constexpr auto PHYSICS_BIT = TRANSFORM_BIT | RIGIDBODY_BIT;
+
+    constexpr size_t size_of(ArchetypeBit bit){
+        size_t size = sizeof(EntityID);
+        #define X(type, name) \
+            if(bit & name##_BIT) \
+                size += sizeof(type);
+        ARCHETYPE_PAIRS
+        #undef X
+        return size;
+    }
+
+    template<typename T>
+    consteval ArchetypeBit bit_of();
+    template<typename... Ts>
+    consteval ArchetypeBit bits_of(){
+        return (... | bit_of<Ts>());
+    }
+    #define TYPE_TO_BIT(type, name) template<> \
+        consteval ArchetypeBit bit_of<type>(){ return name##_BIT; }
+    #define X TYPE_TO_BIT
+    ARCHETYPE_PAIRS
+    #undef X
+
+    template<value_type T>
+    auto bits_of(T)->ArchetypeBit{
+        using U = std::remove_cvref_t<T>;
+
+        return bit_of<U>();
+    }
+    template<value_type T1, all_value... TN>
+    auto bits_of(T1, TN... tn){
+        using U = std::remove_cvref_t<T1>;
+
+        return bit_of<U>() + bits_of(tn...);
+    }
+
+    template<pointer_type T>
+    auto bits_of(T t){
+        using U = std::remove_pointer_t<std::remove_cvref_t<T>>;
+
+        return t != nullptr ? bit_of<U>() : 0;
+    }
+    template<pointer_type T1, all_pointer... TN>
+    auto bits_of(T1 t1, TN... tn){
+        using U = std::remove_pointer_t<std::remove_cvref_t<T1>>;
+        auto bit = bits_of(tn...);
+
+        return bit + (t1 != nullptr ? bit_of<U>() : 0);
+    }
+
+    template<optional_type T>
+    auto bits_of(const T& t){
+        using U = remove_optional_t<std::remove_cvref_t<T>>;
+
+        return t.has_value() ? bit_of<U>() : 0;
+    }
+    template<optional_type T1, all_optional... TN>
+    auto bits_of(const T1& t1, const TN&... tn){
+        using U = remove_optional_t<std::remove_cvref_t<T1>>;
+        auto bit = bits_of(tn...);
+
+        return bit + (t1.has_value() ? bit_of<U>() : 0);
+    }
+
+    template<typename T>
+    constexpr size_t offset_of(ArchetypeBit bit){
+        if(!isSubset(bit_of<T>(), bit))
+            return -1;
+
+        #define COMP_OFFSET(type, name) \
+            if(std::same_as<T, type>) \
+                return offset; \
+            if(bit & bit_of<type>()) \
+                offset += sizeof(type);
+        size_t offset = sizeof(EntityID);
+        #define X COMP_OFFSET
+        ARCHETYPE_PAIRS
+        #undef X
+        return offset;
+    }
+
+    constexpr std::string name_of(ArchetypeBit bit){
+        switch(bit) {
+        #define X(type, name) \
+        case name##_BIT: \
+            return #type;
+        ARCHETYPE_PAIRS
+        #undef X
+        default:
+            return "Unnamed";
+        }
+    }
+
+    template<typename T>
+    constexpr std::string name_of(){
+        return name_of(bit_of<T>());
+    }
+
+    constexpr auto x = bits_of<Transform>();
+}
