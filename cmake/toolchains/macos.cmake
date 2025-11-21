@@ -1,0 +1,6 @@
+execute_process(
+    COMMAND xcrun --sdk macosx --show-sdk-path
+    OUTPUT_VARIABLE MACOSX_SDK_PATH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+set(CMAKE_OSX_SYSROOT "${MACOSX_SDK_PATH}" CACHE PATH "")
