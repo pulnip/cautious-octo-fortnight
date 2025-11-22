@@ -14,7 +14,7 @@ namespace RenderToy
 
     private:
         Map&         map;
-        ArchetypeBit required_bit;
+        static constexpr ArchetypeBit required_bit = bits_of<Ts...>();
 
     public:
         struct sentinel{};
@@ -23,11 +23,11 @@ namespace RenderToy
             Map::iterator map_it;
             Map::iterator map_end;
             Index         vec_index = 0;
-            ArchetypeBit  required_bit;
+            static constexpr ArchetypeBit required_bit = ArchetypeView::required_bit;
 
         public:
             iterator(Map::iterator map_it, Map::iterator map_end)
-            :map_it(map_it), map_end(map_end), required_bit(bits_of<Ts...>()){
+            :map_it(map_it), map_end(map_end){
                 advance_to_valid_archetype();
             }
 
@@ -79,11 +79,11 @@ namespace RenderToy
             Map::const_iterator map_it;
             Map::const_iterator map_end;
             Index               vec_index = 0;
-            ArchetypeBit        required_bit;
+            static constexpr ArchetypeBit required_bit = ArchetypeView::required_bit;
 
         public:
             const_iterator(Map::const_iterator map_it, Map::const_iterator map_end)
-            :map_it(map_it), map_end(map_end), required_bit(bits_of<Ts...>()){
+            :map_it(map_it), map_end(map_end){
                 advance_to_valid_archetype();
             }
 
@@ -139,6 +139,16 @@ namespace RenderToy
         auto    end() const noexcept{ return sentinel{}; }
         auto cbegin() const noexcept{ return const_iterator{map.begin(), map.end()}; }
         auto   cend() const noexcept{ return sentinel{}; }
+
+        std::size_t size() const noexcept{
+            std::size_t size = 0;
+            for(auto it = map.cbegin(); it != map.cend(); ++it){
+                if(isSubset(required_bit, it->first))
+                    size += it->second.size();
+            }
+
+            return size;
+        }
     };
 
     template<value_type T>

@@ -3,6 +3,66 @@
 
 using namespace RenderToy;
 
+TEST(ArchetypeView, TrivialSize){
+    EntityRegistry registry;
+
+    auto view = registry.query<Transform>();
+    EXPECT_EQ(view.size(), 0);
+}
+
+TEST(ArchetypeView, ComplexSize){
+    Vec4 testColors[] = {
+        {{0.1, 0.2, 0.3, 0.5}},
+        {{0.4, 0.3, 0.9, 1.0}},
+        {{0.5, 0.1, 0.0, 0.5}}
+    };
+    EntityRegistry registry;
+    for(size_t i=0; i<3; ++i){
+        registry.createEntity(
+            Transform{
+                .entity = std::numeric_limits<EntityID>::max(),
+                .isActive = true,
+                .position = zeros(),
+                .rotation = unitQuat(),
+                .scale = ones()
+            }
+        );
+        registry.createEntity(
+            Transform{
+                .entity = std::numeric_limits<EntityID>::max(),
+                .isActive = true,
+                .position = zeros(),
+                .rotation = unitQuat(),
+                .scale = ones()
+            },
+            Color{
+                .entity = std::numeric_limits<EntityID>::max(),
+                .isActive = true,
+                .color = testColors[i]
+            }
+        );
+        registry.createEntity(
+            Transform{
+                .entity = std::numeric_limits<EntityID>::max(),
+                .isActive = true,
+                .position = zeros(),
+                .rotation = unitQuat(),
+                .scale = ones()
+            },
+            Element{
+                .entity = std::numeric_limits<EntityID>::max(),
+                .isActive = true,
+                .type = ElementType::WIND
+            }
+        );
+    }
+
+    auto t_view = registry.query<Transform>();
+    auto c_view = registry.query<Color>();
+    EXPECT_EQ(t_view.size(), 9);
+    EXPECT_EQ(c_view.size(), 3);
+}
+
 TEST(ArchetypeView, SimpleQuery){
     EntityRegistry registry;
     Vec4 testColors[] = {
