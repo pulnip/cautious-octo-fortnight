@@ -190,11 +190,11 @@ namespace RenderToy
             assert(!(CHUNK_SIZE==0 && "CHUNK_SIZE==0, intentional crash"));
             return ptrAdd(mem, CHUNK_SIZE*index);
         }
-        auto  begin(){ return iterator(mem, CHUNK_SIZE, 0); }
-        auto    end(){ return iterator(mem, CHUNK_SIZE, size_); }
-        auto  begin() const{ return const_iterator(mem, CHUNK_SIZE, 0);     }
+        auto  begin()      { return       iterator(mem, CHUNK_SIZE,     0); }
+        auto    end()      { return       iterator(mem, CHUNK_SIZE, size_); }
+        auto  begin() const{ return const_iterator(mem, CHUNK_SIZE,     0); }
         auto    end() const{ return const_iterator(mem, CHUNK_SIZE, size_); }
-        auto cbegin() const{ return const_iterator(mem, CHUNK_SIZE, 0);     }
+        auto cbegin() const{ return const_iterator(mem, CHUNK_SIZE,     0); }
         auto   cend() const{ return const_iterator(mem, CHUNK_SIZE, size_); }
 
         std::size_t     size() const{ return size_; }

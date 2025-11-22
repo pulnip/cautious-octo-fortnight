@@ -1,4 +1,5 @@
 add_executable(RenderToyEngineTest
+    ComponentTypeRegistry.cpp
     EntityRegistry.cpp
 )
 

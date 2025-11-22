@@ -110,33 +110,6 @@ namespace RenderToy
         Vec3 force;
     );
 
-    #define ARCHETYPES \
-        X(       TRANSFORM) \
-        X(          CAMERA) \
-        X(           COLOR) \
-        X(            MESH) \
-        X(          SCRIPT) \
-        X(           INPUT) \
-        X(        LIFESPAN) \
-        X(       RIGIDBODY) \
-        X(         ELEMENT) \
-        X(  SPHERECOLLIDER) \
-        X(FIXEDBOXCOLLIDER) \
-        X(     BOXCOLLIDER) \
-        X(       COLLISION) \
-        X(        COLLIDED) \
-        X(          PLAYER) \
-        X(          EDITOR) \
-        X(      ATTACHABLE) \
-        X(       CLIMBABLE) \
-        X(       INVENTORY) \
-        X(        LOOTABLE) \
-        X(      LOOTMAGNET) \
-        X(        ATTACHED) \
-        X(         CLIMBED) \
-        X(        GROUNDED) \
-        X(          WALKED) \
-        X(             RAN)
     #define ARCHETYPE_PAIRS \
         X(        Transform,        TRANSFORM) \
         X(           Camera,           CAMERA) \
@@ -165,46 +138,43 @@ namespace RenderToy
         X(           Walked,           WALKED) \
         X(              Ran,              RAN)
 
-    #define ASSERT_TRIVIAL(type, name) static_assert(std::is_trivially_copyable_v<type>);
-    #define X ASSERT_TRIVIAL
+    #define X(type, name) static_assert(std::is_trivially_copyable_v<type>);
+    ARCHETYPE_PAIRS
+    #undef X
+
+    template<typename T>
+    consteval bool isBuiltIn(){ return false; }
+    #define X(type, _) template<> \
+        consteval bool isBuiltIn<type>(){ return true; }
     ARCHETYPE_PAIRS
     #undef X
 
     enum{
-        #define NAME_INDEX(name) name##_INDEX,
+        #define NAME_INDEX(_, name) name##_INDEX,
         #define X NAME_INDEX
-        ARCHETYPES
+        ARCHETYPE_PAIRS
         #undef X
         NUM_ARCHETYPES
     };
 
-    #define DECL_BIT(name) constexpr ArchetypeBit \
-        name##_BIT = (1 << name##_INDEX);
-    #define X DECL_BIT
-    ARCHETYPES
+    #define X(_, name) constexpr ArchetypeBit \
+        name##_BIT = (ArchetypeBit(1) << name##_INDEX);
+    ARCHETYPE_PAIRS
     #undef X
+
     constexpr auto VIEW_BIT    = TRANSFORM_BIT |    CAMERA_BIT;
     constexpr auto PHYSICS_BIT = TRANSFORM_BIT | RIGIDBODY_BIT;
 
-    constexpr size_t size_of(ArchetypeBit bit){
-        size_t size = sizeof(EntityID);
-        #define X(type, name) \
-            if(bit & name##_BIT) \
-                size += sizeof(type);
-        ARCHETYPE_PAIRS
-        #undef X
-        return size;
-    }
-
     template<typename T>
-    consteval ArchetypeBit bit_of();
+    consteval ArchetypeBit bit_of(){
+        return 0;
+    }
     template<typename... Ts>
     consteval ArchetypeBit bits_of(){
         return (... | bit_of<Ts>());
     }
-    #define TYPE_TO_BIT(type, name) template<> \
+    #define X(type, name) template<> \
         consteval ArchetypeBit bit_of<type>(){ return name##_BIT; }
-    #define X TYPE_TO_BIT
     ARCHETYPE_PAIRS
     #undef X
 
@@ -249,18 +219,27 @@ namespace RenderToy
         return bit + (t1.has_value() ? bit_of<U>() : 0);
     }
 
+    constexpr std::size_t size_of(ArchetypeBit bit){
+        std::size_t size = sizeof(EntityID);
+        #define X(type, name) \
+            if(bit & name##_BIT) \
+                size += sizeof(type);
+        ARCHETYPE_PAIRS
+        #undef X
+        return size;
+    }
+
     template<typename T>
-    constexpr size_t offset_of(ArchetypeBit bit){
+    constexpr std::size_t offset_of(ArchetypeBit bit){
         if(!isSubset(bit_of<T>(), bit))
             return -1;
 
-        #define COMP_OFFSET(type, name) \
+        std::size_t offset = sizeof(EntityID);
+        #define X(type, name) \
             if(std::same_as<T, type>) \
                 return offset; \
             if(bit & bit_of<type>()) \
                 offset += sizeof(type);
-        size_t offset = sizeof(EntityID);
-        #define X COMP_OFFSET
         ARCHETYPE_PAIRS
         #undef X
         return offset;
