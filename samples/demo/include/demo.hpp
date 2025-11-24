@@ -5,8 +5,9 @@
 namespace Demo{
     class DemoGame: public RenderToy::IGame{
     public:
-        void onInit(RenderToy::World*);
-        void onUpdate(RenderToy::DeltaTime);
-        void onShutdown();
+        void onConfigure(RenderToy::EngineConfig&) override;
+        void onInit(RenderToy::World&) override;
+        void onUpdate(const RenderToy::UpdateContext&) override;
+        void onShutdown() override;
     };
 }

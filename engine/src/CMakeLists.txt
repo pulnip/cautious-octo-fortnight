@@ -5,6 +5,7 @@ PRIVATE
 
 add_subdirectory(ECS)
 add_subdirectory(Log)
+add_subdirectory(Platform)
 
 target_link_libraries(RenderToyEngine
 PUBLIC
@@ -12,4 +13,5 @@ PUBLIC
 PRIVATE
     RenderToy::ECS
     RenderToy::Log
+    RenderToy::Platform
 )

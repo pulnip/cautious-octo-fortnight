@@ -52,37 +52,37 @@ TEST(ComponentTypeRegistry, checkBuiltInComponent){
     ComponentTypeRegistry typeRegistry;
 
     auto t_bit = typeRegistry.bit_of<Transform>();
-    auto m_bit = typeRegistry.bit_of<Mesh>();
-    auto bit = t_bit | m_bit;
+    auto c_bit = typeRegistry.bit_of<Color>();
+    auto bit = t_bit | c_bit;
     auto chunkSize = typeRegistry.size_of(bit);
     auto t_offset = typeRegistry.offset_of<Transform>(bit);
-    auto m_offset = typeRegistry.offset_of<Mesh>(bit);
+    auto m_offset = typeRegistry.offset_of<Color>(bit);
 
     EXPECT_EQ(t_bit, bit_of<Transform>());
-    EXPECT_EQ(m_bit, bit_of<Mesh>());
-    EXPECT_EQ(bit, (bits_of<Transform, Mesh>()));
-    EXPECT_EQ(chunkSize, sizeof(EntityID) + sizeof(Transform) + sizeof(Mesh));
+    EXPECT_EQ(c_bit, bit_of<Color>());
+    EXPECT_EQ(bit, (bits_of<Transform, Color>()));
+    EXPECT_EQ(chunkSize, sizeof(EntityID) + sizeof(Transform) + sizeof(Color));
     EXPECT_EQ(t_offset, offset_of<Transform>(bit));
-    EXPECT_EQ(m_offset, offset_of<Mesh>(bit));
+    EXPECT_EQ(m_offset, offset_of<Color>(bit));
 }
 
 TEST(ComponentTypeRegistry, registerBuiltInComponent){
     ComponentTypeRegistry typeRegistry;
 
     typeRegistry.registerComponent<Transform>();
-    typeRegistry.registerComponent<Mesh>();
+    typeRegistry.registerComponent<Color>();
 
     auto t_bit = typeRegistry.bit_of<Transform>();
-    auto m_bit = typeRegistry.bit_of<Mesh>();
-    auto bit = t_bit | m_bit;
+    auto c_bit = typeRegistry.bit_of<Color>();
+    auto bit = t_bit | c_bit;
     auto chunkSize = typeRegistry.size_of(bit);
     auto t_offset = typeRegistry.offset_of<Transform>(bit);
-    auto m_offset = typeRegistry.offset_of<Mesh>(bit);
+    auto m_offset = typeRegistry.offset_of<Color>(bit);
 
     EXPECT_EQ(t_bit, TRANSFORM_BIT);
-    EXPECT_EQ(m_bit, MESH_BIT);
-    EXPECT_EQ(bit, TRANSFORM_BIT | MESH_BIT);
-    EXPECT_EQ(chunkSize, sizeof(EntityID) + sizeof(Transform) + sizeof(Mesh));
+    EXPECT_EQ(c_bit, COLOR_BIT);
+    EXPECT_EQ(bit, TRANSFORM_BIT | COLOR_BIT);
+    EXPECT_EQ(chunkSize, sizeof(EntityID) + sizeof(Transform) + sizeof(Color));
     EXPECT_EQ(t_offset, offset_of<Transform>(bit));
-    EXPECT_EQ(m_offset, offset_of<Mesh>(bit));
+    EXPECT_EQ(m_offset, offset_of<Color>(bit));
 }

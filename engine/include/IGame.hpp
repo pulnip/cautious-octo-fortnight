@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Time.hpp"
+#include "UpdateContext.hpp"
+#include "EngineConfig.hpp"
 
 namespace RenderToy
 {
@@ -10,8 +11,9 @@ namespace RenderToy
     public:
         virtual ~IGame() = default;
 
-        virtual void onInit(World*){}
-        virtual void onUpdate(DeltaTime) = 0;
+        virtual void onConfigure(EngineConfig&){}
+        virtual void onInit(World&){}
+        virtual void onUpdate(const UpdateContext&) = 0;
         virtual void onShutdown(){}
     };
 }

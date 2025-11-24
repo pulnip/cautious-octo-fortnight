@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ECS/World.hpp"
+#include "Platform/Window.hpp"
 
 namespace RenderToy
 {
@@ -8,12 +9,10 @@ namespace RenderToy
 
     class Engine{
     private:
+        Window window;
         World world;
-        IGame* game;
 
     public:
-        void onInit(IGame*);
-        void onUpdate(DeltaTime);
-        void onShutdown();
+        int run(IGame&);
     };
 }

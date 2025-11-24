@@ -1,6 +1,7 @@
 add_executable(RenderToyEngineTest
-    ComponentTypeRegistry.cpp
-    EntityRegistry.cpp
+    ECS/ComponentTypeRegistryTest.cpp
+    ECS/EntityRegistryTest.cpp
+    Resource/ResourceManagerTest.cpp
 )
 
 target_link_libraries(RenderToyEngineTest

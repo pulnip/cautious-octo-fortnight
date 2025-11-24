@@ -4,16 +4,21 @@
 #include "GameLogicSystem.hpp"
 #include "InputSystem.hpp"
 
-using RenderToy::World, RenderToy::DeltaTime;
+using RenderToy::EngineConfig;
+using RenderToy::World, RenderToy::UpdateContext;
 
 namespace Demo{
-    void DemoGame::onInit(World* world){
-        std::println("Demo test");
-        world->addSystem<GameLogicSystem>();
-        world->addSystem<InputSystem>();
+    void DemoGame::onConfigure(EngineConfig& config){
+        config.windowTitle = "Demo App";
     }
 
-    void DemoGame::onUpdate(DeltaTime deltaTime){
+    void DemoGame::onInit(World& world){
+        std::println("Demo test");
+        world.addSystem<GameLogicSystem>();
+        world.addSystem<InputSystem>();
+    }
+
+    void DemoGame::onUpdate(const UpdateContext& context){
 
     }
 

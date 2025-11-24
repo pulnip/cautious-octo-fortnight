@@ -3,6 +3,7 @@
 #include "concepts.hpp"
 #include "math.hpp"
 #include "Primitives.hpp"
+#include "Resource/Resource.hpp"
 #include "ECS/Archetype.hpp"
 #include "ECS/Entity.hpp"
 
@@ -28,20 +29,14 @@ namespace RenderToy
     DEFINE_COMPONENT(Color,
         Vec4 color;
     );
-    DEFINE_COMPONENT(Mesh,
+    DEFINE_COMPONENT(RenderObject,
         float alpha;
         UUID mesh;
         UUID materialSet;
         ShaderHandle shaderHandle;
     );
     DEFINE_COMPONENT(ScriptObject,
-        ObjectHandle handle;
-    );
-    DEFINE_COMPONENT(Input,
-        bool isMoveEnabled;
-        bool isJumpEnabled;
-        bool isSkillEnabled;
-        ModuleHandle handle;
+        Script handle;
     );
     DEFINE_COMPONENT(LifeSpan,
         bool isAlive;
@@ -114,9 +109,8 @@ namespace RenderToy
         X(        Transform,        TRANSFORM) \
         X(           Camera,           CAMERA) \
         X(            Color,            COLOR) \
-        X(             Mesh,             MESH) \
-        X(     ScriptObject,           SCRIPT) \
-        X(            Input,            INPUT) \
+        X(     RenderObject,    RENDER_OBJECT) \
+        X(     ScriptObject,    SCRIPT_OBJECT) \
         X(         LifeSpan,         LIFESPAN) \
         X(        Rigidbody,        RIGIDBODY) \
         X(          Element,          ELEMENT) \
@@ -161,9 +155,6 @@ namespace RenderToy
         name##_BIT = (ArchetypeBit(1) << name##_INDEX);
     ARCHETYPE_PAIRS
     #undef X
-
-    constexpr auto VIEW_BIT    = TRANSFORM_BIT |    CAMERA_BIT;
-    constexpr auto PHYSICS_BIT = TRANSFORM_BIT | RIGIDBODY_BIT;
 
     template<typename T>
     consteval ArchetypeBit bit_of(){

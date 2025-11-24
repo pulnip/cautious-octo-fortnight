@@ -2,7 +2,6 @@
 
 #include "math.hpp"
 #include <unordered_map>
-#include "handle.hpp"
 #include "string.hpp"
 
 namespace RenderToy
@@ -64,8 +63,4 @@ namespace RenderToy
     };
 
     using UUID = std::uint64_t;
-    using MeshHandle = Handle;
-    using ShaderHandle = Handle;
-    using ModuleHandle = Handle;
-    using ObjectHandle = Handle;
 }
