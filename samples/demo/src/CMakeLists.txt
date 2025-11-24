@@ -1,5 +1,7 @@
 target_sources(RenderToyDemo
 PRIVATE
-    demo.cpp
+    Demo.cpp
+    GameLogicSystem.cpp
+    InputSystem.cpp
     main.cpp
 )

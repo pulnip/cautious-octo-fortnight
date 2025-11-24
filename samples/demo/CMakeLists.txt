@@ -1,7 +1,7 @@
 if(WIN32)
     add_executable(RenderToyDemo WIN32)
 elseif(APPLE)
-    add_executable(RenderToyDemo MACOSX_BUNDLE)
+    add_executable(RenderToyDemo)
 else()
     add_executable(RenderToyDemo)
 endif()

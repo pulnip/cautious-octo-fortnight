@@ -2,9 +2,10 @@
 #define SDL_MAIN_USE_CALLBACKS 1
 #include <SDL3/SDL_main.h>
 #include "Engine.hpp"
-#include "demo.hpp"
+#include "Demo.hpp"
 
-using RenderToy::Engine;
+using RenderToy::Engine, Demo::DemoGame;
+using RenderToy::LOG_CORE;
 
 SDL_AppResult SDL_AppInit([[maybe_unused]] void** appState,
     [[maybe_unused]] int argc, [[maybe_unused]] char* argv[]
@@ -19,7 +20,7 @@ SDL_AppResult SDL_AppInit([[maybe_unused]] void** appState,
     }
 
     auto engine = new Engine();
-    engine->start();
+    engine->onInit(new DemoGame());
 
     *appState = engine;
 
@@ -27,6 +28,10 @@ SDL_AppResult SDL_AppInit([[maybe_unused]] void** appState,
 }
 
 SDL_AppResult SDL_AppIterate(void* appState){
+    auto engine = static_cast<Engine*>(appState);
+
+    engine->onUpdate(1/60.0f);
+
     return SDL_APP_CONTINUE;
 }
 
@@ -50,17 +55,21 @@ SDL_AppResult SDL_AppEvent([[maybe_unused]] void* appState,
     return SDL_APP_CONTINUE;
 }
 
-void SDL_AppQuit(void* appState, [[maybe_unused]] SDL_AppResult result){
+void SDL_AppQuit(void* appState, SDL_AppResult result){
+    auto engine = static_cast<Engine*>(appState);
+
     switch(result){
     case SDL_APP_SUCCESS:
-        fprintf(stdout, "SDL_APP_SUCCESS\n");
+        LOG_DEBUG(LOG_CORE, "SDL_APP_SUCCESS");
         break;
     case SDL_APP_FAILURE:
-        fprintf(stdout, "SDL_APP_FAILURE\n");
+        LOG_DEBUG(LOG_CORE, "SDL_APP_FAILURE");
         break;
     default:
         break;
     }
 
-    delete static_cast<Engine*>(appState);
+    engine->onShutdown();
+
+    delete engine;
 }
