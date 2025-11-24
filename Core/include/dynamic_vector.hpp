@@ -10,7 +10,7 @@
 #include <type_traits>
 #include <utility>
 #include "concepts.hpp"
-#include "primitives.hpp"
+#include "core_types.hpp"
 #include "ptr_util.hpp"
 
 namespace RenderToy

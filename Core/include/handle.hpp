@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <limits>
 #include <utility>
-#include "primitives.hpp"
+#include "core_types.hpp"
 
 namespace RenderToy
 {
