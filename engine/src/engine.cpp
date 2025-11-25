@@ -37,6 +37,8 @@ namespace RenderToy
 
         game.onInit(world);
 
+        timer.reset();
+
         bool isRunning = true;
         while(isRunning && !window.getShouldClose()){
             window.pumpEvents([&](const WindowEvent& event){
@@ -44,8 +46,10 @@ namespace RenderToy
                     isRunning = false;
             });
 
+            timer.newFrame();
+
             UpdateContext updateContext{
-                .deltaTime = 1.0f/60,
+                .deltaTime = timer.deltaSeconds(),
             };
             game.onUpdate(updateContext);
 

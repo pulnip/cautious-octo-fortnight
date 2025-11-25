@@ -2,6 +2,7 @@
 
 #include "ECS/World.hpp"
 #include "Platform/Window.hpp"
+#include "Time/Timer.hpp"
 
 namespace RenderToy
 {
@@ -11,6 +12,7 @@ namespace RenderToy
     private:
         Window window;
         World world;
+        Timer timer;
 
     public:
         int run(IGame&);

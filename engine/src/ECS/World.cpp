@@ -11,17 +11,12 @@ namespace RenderToy
         if(needsSort){
             sortSystems();
 
-            for(const auto& sys: sortedSystems){
-                LOG_DEBUG(LOG_CORE, "{}", sys->getName());
-            }
-
             needsSort = false;
         }
 
-        for(auto& [_, system]: systems){
+        for(auto& system: sortedSystems)
             if(system->isEnabled())
                 system->onUpdate(deltaTime);
-        }
     }
 
     void World::sortSystems(){
