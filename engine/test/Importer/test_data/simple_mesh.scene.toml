@@ -1,0 +1,4 @@
+[[entities]]
+name = "Cube"
+[entities.mesh]
+uri = "embedded:cube"

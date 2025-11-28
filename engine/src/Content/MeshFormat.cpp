@@ -1,0 +1,202 @@
+#include "Content/MeshFormat.hpp"
+#include <cstring>
+#include <algorithm>
+
+namespace {
+    // Align offset to 16 bytes
+    inline uint32_t align16(uint32_t offset) {
+        return (offset + 15) & ~15;
+    }
+
+    // Write data to buffer at offset
+    template<typename T>
+    void writeAt(std::vector<uint8_t>& buffer, size_t offset, const T& data) {
+        std::memcpy(buffer.data() + offset, &data, sizeof(T));
+    }
+
+    // Read data from buffer at offset
+    template<typename T>
+    T readAt(const uint8_t* buffer, size_t offset) {
+        T data;
+        std::memcpy(&data, buffer + offset, sizeof(T));
+        return data;
+    }
+
+    // Submesh metadata (stored in submesh table)
+    struct SubmeshTableEntry{
+        uint32_t vertexOffset;      // Offset in vertex array
+        uint32_t vertexCount;
+        uint32_t indexOffset;       // Offset in index array
+        uint32_t indexCount;
+        uint32_t primitiveType;
+        uint32_t materialSlotNameOffset;  // Offset in string blob
+        uint32_t materialSlotNameLength;
+        uint32_t padding;  // Align to 32 bytes
+    };
+    static_assert(sizeof(SubmeshTableEntry) == 32);
+}
+
+namespace RenderToy
+{
+    std::vector<uint8_t> serializeMesh(const MeshData& mesh) {
+        // Calculate sizes
+        const uint32_t submeshCount = mesh.submeshCount();
+        const uint32_t totalVertices = mesh.totalVertexCount();
+        const uint32_t totalIndices = mesh.totalIndexCount();
+
+        // Calculate string blob size (material slot names)
+        uint32_t stringBlobSize = 0;
+        for (const auto& submesh : mesh.submeshes) {
+            stringBlobSize += static_cast<uint32_t>(submesh.materialSlotName.size() + 1);  // +1 for null terminator
+        }
+
+        // Calculate offsets
+        const uint32_t headerSize = sizeof(MeshFileHeader);
+        const uint32_t submeshTableOffset = align16(headerSize);
+        const uint32_t vertexDataOffset = align16(submeshTableOffset + submeshCount * sizeof(SubmeshTableEntry));
+        const uint32_t indexDataOffset = align16(vertexDataOffset + totalVertices * sizeof(Vertex));
+        const uint32_t stringBlobOffset = align16(indexDataOffset + totalIndices * sizeof(uint32_t));
+        const uint32_t totalSize = align16(stringBlobOffset + stringBlobSize);
+
+        // Allocate buffer
+        std::vector<uint8_t> buffer(totalSize, 0);
+
+        // Write header
+        MeshFileHeader header{};
+        std::memcpy(header.magic, MESH_FILE_MAGIC, 8);
+        header.version = MESH_FILE_VERSION;
+        header.headerSize = sizeof(MeshFileHeader);
+        header.submeshTableOffset = submeshTableOffset;
+        header.vertexDataOffset = vertexDataOffset;
+        header.indexDataOffset = indexDataOffset;
+        header.materialTableOffset = 0;  // Not implemented yet
+        header.stringBlobOffset = stringBlobOffset;
+        header.submeshCount = submeshCount;
+        header.totalVertexCount = totalVertices;
+        header.totalIndexCount = totalIndices;
+        header.materialCount = 0;  // Not implemented yet
+        header.stringBlobSize = stringBlobSize;
+        header.axisInfo = mesh.axisInfo;
+        header.bounds = mesh.bounds;
+
+        writeAt(buffer, 0, header);
+
+        // Write submesh table + vertex data + index data + string blob
+        uint32_t currentVertexOffset = 0;
+        uint32_t currentIndexOffset = 0;
+        uint32_t currentStringOffset = 0;
+
+        for (size_t i = 0; i < mesh.submeshes.size(); ++i) {
+            const auto& submesh = mesh.submeshes[i];
+
+            // Write submesh table entry
+            SubmeshTableEntry entry{};
+            entry.vertexOffset = currentVertexOffset;
+            entry.vertexCount = submesh.vertexCount();
+            entry.indexOffset = currentIndexOffset;
+            entry.indexCount = submesh.indexCount();
+            entry.primitiveType = static_cast<uint32_t>(submesh.primitiveType);
+            entry.materialSlotNameOffset = currentStringOffset;
+            entry.materialSlotNameLength = static_cast<uint32_t>(submesh.materialSlotName.size());
+
+            const size_t entryOffset = submeshTableOffset + i * sizeof(SubmeshTableEntry);
+            writeAt(buffer, entryOffset, entry);
+
+            // Write vertices
+            const size_t vertexWriteOffset = vertexDataOffset + currentVertexOffset * sizeof(Vertex);
+            std::memcpy(buffer.data() + vertexWriteOffset,
+                        submesh.vertices.data(),
+                        submesh.vertices.size() * sizeof(Vertex));
+
+            // Write indices
+            const size_t indexWriteOffset = indexDataOffset + currentIndexOffset * sizeof(uint32_t);
+            std::memcpy(buffer.data() + indexWriteOffset,
+                        submesh.indices.data(),
+                        submesh.indices.size() * sizeof(uint32_t));
+
+            // Write material slot name to string blob
+            const size_t stringWriteOffset = stringBlobOffset + currentStringOffset;
+            std::memcpy(buffer.data() + stringWriteOffset,
+                        submesh.materialSlotName.c_str(),
+                        submesh.materialSlotName.size() + 1);  // Include null terminator
+
+            // Update offsets
+            currentVertexOffset += submesh.vertexCount();
+            currentIndexOffset += submesh.indexCount();
+            currentStringOffset += static_cast<uint32_t>(submesh.materialSlotName.size() + 1);
+        }
+
+        return buffer;
+    }
+
+    std::optional<MeshData> deserializeMesh(std::span<const uint8_t> data) {
+        // Validate minimum size
+        if (data.size() < sizeof(MeshFileHeader)) {
+            return std::nullopt;
+        }
+
+        // Read and validate header
+        MeshFileHeader header;
+        std::memcpy(&header, data.data(), sizeof(MeshFileHeader));
+
+        // Check magic number
+        if (std::memcmp(header.magic, MESH_FILE_MAGIC, 8) != 0) {
+            return std::nullopt;
+        }
+
+        // Check version
+        if (header.version != MESH_FILE_VERSION) {
+            return std::nullopt;
+        }
+
+        // Validate offsets
+        if (header.submeshTableOffset + header.submeshCount * sizeof(SubmeshTableEntry) > data.size() ||
+            header.vertexDataOffset + header.totalVertexCount * sizeof(Vertex) > data.size() ||
+            header.indexDataOffset + header.totalIndexCount * sizeof(uint32_t) > data.size() ||
+            header.stringBlobOffset + header.stringBlobSize > data.size()) {
+            return std::nullopt;
+        }
+
+        // Create mesh
+        MeshData mesh;
+        mesh.axisInfo = header.axisInfo;
+        mesh.bounds = header.bounds;
+
+        const uint8_t* bufferPtr = data.data();
+
+        // Read submeshes
+        for (uint32_t i = 0; i < header.submeshCount; ++i) {
+            const size_t entryOffset = header.submeshTableOffset + i * sizeof(SubmeshTableEntry);
+            SubmeshTableEntry entry = readAt<SubmeshTableEntry>(bufferPtr, entryOffset);
+
+            SubmeshDescriptor submesh;
+
+            // Read vertices
+            submesh.vertices.resize(entry.vertexCount);
+            const size_t vertexReadOffset = header.vertexDataOffset + entry.vertexOffset * sizeof(Vertex);
+            std::memcpy(submesh.vertices.data(),
+                        bufferPtr + vertexReadOffset,
+                        entry.vertexCount * sizeof(Vertex));
+
+            // Read indices
+            submesh.indices.resize(entry.indexCount);
+            const size_t indexReadOffset = header.indexDataOffset + entry.indexOffset * sizeof(uint32_t);
+            std::memcpy(submesh.indices.data(),
+                        bufferPtr + indexReadOffset,
+                        entry.indexCount * sizeof(uint32_t));
+
+            // Read primitive type
+            submesh.primitiveType = static_cast<PrimitiveType>(entry.primitiveType);
+
+            // Read material slot name from string blob
+            const size_t stringReadOffset = header.stringBlobOffset + entry.materialSlotNameOffset;
+            const char* namePtr = reinterpret_cast<const char*>(bufferPtr + stringReadOffset);
+            submesh.materialSlotName = std::string(namePtr, entry.materialSlotNameLength);
+
+            mesh.submeshes.push_back(std::move(submesh));
+        }
+
+        return mesh;
+    }
+
+} // namespace RenderToy

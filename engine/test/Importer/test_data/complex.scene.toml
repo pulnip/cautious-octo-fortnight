@@ -1,0 +1,46 @@
+[[entities]]
+name = "Player"
+[entities.transform]
+position = [0.0, 1.0, 0.0]
+rotation = [0.0, 0.0, 0.0, 1.0]
+scale = [1.0, 1.0, 1.0]
+[entities.mesh]
+uri = "file:asset/player.rtmesh"
+    [[entities.mesh.materialOverride]]
+    baseColorTexture = "file:asset/player_diffuse.png"
+    targetSlot = "body"
+    [entities.mesh.shader]
+    modulePath = ""
+    vertexFunction = "vs_main"
+    fragmentFunction = "fs_pbr"
+[entities.rigidbody]
+velocity = [0.0, 0.0, 0.0]
+useGravity = true
+mass = 70.0
+[entities.boxCollider]
+center = [0.0, 0.9, 0.0]
+size = [0.6, 1.8, 0.6]
+    [entities.boxCollider.material]
+    friction = 0.5
+    bounciness = 0.0
+
+[[entities]]
+name = "Ground"
+[entities.transform]
+position = [0.0, 0.0, 0.0]
+rotation = [0.0, 0.0, 0.0, 1.0]
+scale = [100.0, 1.0, 100.0]
+[entities.mesh]
+uri = "embedded:cube"
+
+[[entities]]
+name = "MainCamera"
+[entities.transform]
+position = [0.0, 5.0, -10.0]
+rotation = [0.0, 0.0, 0.0, 1.0]
+scale = [1.0, 1.0, 1.0]
+[entities.camera]
+type = "Perspective"
+fov = 60.0
+nearPlane = 0.1
+farPlane = 1000.0

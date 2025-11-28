@@ -39,6 +39,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(stb)
 
+# tomlplusplus - TOML parser library
+FetchContent_Declare(
+    tomlplusplus
+    GIT_REPOSITORY "https://github.com/marzer/tomlplusplus.git"
+    GIT_TAG "v3.4.0"
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(tomlplusplus)
+
 include(cmake/sanitizer.cmake)
 
 if(RENDERTOY_ENABLE_TEST)

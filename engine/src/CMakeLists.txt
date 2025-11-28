@@ -3,6 +3,8 @@ PRIVATE
     Engine.cpp
 )
 
+add_subdirectory(Content)
+add_subdirectory(Importer)
 add_subdirectory(ECS)
 add_subdirectory(Log)
 add_subdirectory(Platform)
@@ -14,6 +16,8 @@ target_link_libraries(RenderToyEngine
 PUBLIC
     RenderToy::Core
 PRIVATE
+    RenderToy::Content
+    RenderToy::Importer
     RenderToy::ECS
     RenderToy::Log
     RenderToy::Platform
