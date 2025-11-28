@@ -8,6 +8,7 @@ add_subdirectory(Log)
 add_subdirectory(Platform)
 add_subdirectory(Time)
 add_subdirectory(RHI)
+add_subdirectory(RenderGraph)
 
 target_link_libraries(RenderToyEngine
 PUBLIC
@@ -18,4 +19,5 @@ PRIVATE
     RenderToy::Platform
     RenderToy::Time
     RenderToy::RHI
+    RenderToy::RenderGraph
 )
