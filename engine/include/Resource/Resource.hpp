@@ -2,20 +2,25 @@
 
 #include "generic_handle.hpp"
 #include "Resource/ResourceManager.hpp"
-#include "Resource/Mesh.hpp"
+#include "Resource/RenderingResources.hpp"
+#include "Resource/RenderingResourceTraits.hpp"
 #include "Resource/Script.hpp"
-#include "Resource/Shader.hpp"
-#include "Resource/Texture.hpp"
 
 namespace RenderToy
 {
-    using MeshHandle    = generic_handle<Mesh>;
-    using ScriptHandle  = generic_handle<Script>;
-    using ShaderHandle  = generic_handle<Shader>;
-    using TextureHandle = generic_handle<Texture>;
+    // Rendering resource handles are defined in RenderingResources.hpp
+    // SubmeshHandle, TextureHandle, MaterialHandle, ShaderHandle,
+    // MeshHandle, MaterialSetHandle
 
-    using MeshManager    = ResourceManager<Mesh>;
-    using ScriptManager  = ResourceManager<Script>;
-    using ShaderManager  = ResourceManager<Shader>;
-    using TextureManager = ResourceManager<Texture>;
+    // Legacy compatibility (TODO: remove after migration)
+    using ScriptHandle  = generic_handle<Script>;
+
+    // Resource Managers
+    using SubmeshManager    = ResourceManager<Submesh>;
+    using TextureManager    = ResourceManager<Texture>;
+    using MaterialManager   = ResourceManager<Material>;
+    using ShaderManager     = ResourceManager<Shader>;
+    using MeshManager       = ResourceManager<Mesh>;
+    using MaterialSetManager = ResourceManager<MaterialSet>;
+    using ScriptManager     = ResourceManager<Script>;
 }

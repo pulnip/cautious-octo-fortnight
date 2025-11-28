@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "Resource/ResourceManager.hpp"
-#include "Resource/MeshTraits.hpp"
+#include "Resource/SubmeshTraits.hpp"
 #include "RHI/RHIDevice.hpp"
 #include <memory>
 
@@ -45,10 +45,10 @@ TEST(ResourceManager, Trivial){
 }
 
 // ============================================================================
-// Mesh ResourceManager Tests
+// Submesh ResourceManager Tests
 // ============================================================================
 
-class MeshResourceManagerTest : public ::testing::Test {
+class SubmeshResourceManagerTest : public ::testing::Test {
 protected:
     std::unique_ptr<RenderToy::RHIDevice> device;
 
@@ -58,7 +58,7 @@ protected:
             .enableDebugLayer = false,
             .enableGPUValidation = false,
             .enableValidation = false,
-            .applicationName = "MeshResourceManagerTest",
+            .applicationName = "SubmeshResourceManagerTest",
             .windowHandle = nullptr
         };
         device = RenderToy::RHIDevice::create(desc);
@@ -70,10 +70,10 @@ protected:
     }
 };
 
-TEST_F(MeshResourceManagerTest, LoadMeshFromOBJ){
-    ResourceManager<RenderToy::Mesh> meshManager;
+TEST_F(SubmeshResourceManagerTest, LoadMeshFromOBJ){
+    ResourceManager<RenderToy::Submesh> meshManager;
 
-    RenderToy::MeshRequest request{
+    RenderToy::SubmeshRequest request{
         .path = "engine/test/Importer/test_data/simple_triangle.obj",
         .device = device.get()
     };
@@ -81,7 +81,7 @@ TEST_F(MeshResourceManagerTest, LoadMeshFromOBJ){
     auto handle = meshManager.getOrLoad(request);
     ASSERT_TRUE(handle.isValid());
 
-    const RenderToy::Mesh* mesh = meshManager.get(handle);
+    const RenderToy::Submesh* mesh = meshManager.get(handle);
     ASSERT_NE(mesh, nullptr);
     EXPECT_TRUE(mesh->isValid());
     EXPECT_EQ(mesh->vertexCount, 3);
@@ -89,10 +89,10 @@ TEST_F(MeshResourceManagerTest, LoadMeshFromOBJ){
     EXPECT_TRUE(mesh->hasIndices());
 }
 
-TEST_F(MeshResourceManagerTest, LoadMeshFromOBJ_Cube){
-    ResourceManager<RenderToy::Mesh> meshManager;
+TEST_F(SubmeshResourceManagerTest, LoadMeshFromOBJ_Cube){
+    ResourceManager<RenderToy::Submesh> meshManager;
 
-    RenderToy::MeshRequest request{
+    RenderToy::SubmeshRequest request{
         .path = "engine/test/Importer/test_data/simple_cube.obj",
         .device = device.get()
     };
@@ -100,17 +100,17 @@ TEST_F(MeshResourceManagerTest, LoadMeshFromOBJ_Cube){
     auto handle = meshManager.getOrLoad(request);
     ASSERT_TRUE(handle.isValid());
 
-    const RenderToy::Mesh* mesh = meshManager.get(handle);
+    const RenderToy::Submesh* mesh = meshManager.get(handle);
     ASSERT_NE(mesh, nullptr);
     EXPECT_TRUE(mesh->isValid());
     EXPECT_GT(mesh->vertexCount, 0);
     EXPECT_EQ(mesh->indexCount, 36);  // 12 triangles * 3 indices
 }
 
-TEST_F(MeshResourceManagerTest, CachingWorks){
-    ResourceManager<RenderToy::Mesh> meshManager;
+TEST_F(SubmeshResourceManagerTest, CachingWorks){
+    ResourceManager<RenderToy::Submesh> meshManager;
 
-    RenderToy::MeshRequest request{
+    RenderToy::SubmeshRequest request{
         .path = "engine/test/Importer/test_data/simple_triangle.obj",
         .device = device.get()
     };
@@ -122,10 +122,10 @@ TEST_F(MeshResourceManagerTest, CachingWorks){
     EXPECT_EQ(handle1, handle2);
 }
 
-TEST_F(MeshResourceManagerTest, UnloadMesh){
-    ResourceManager<RenderToy::Mesh> meshManager;
+TEST_F(SubmeshResourceManagerTest, UnloadMesh){
+    ResourceManager<RenderToy::Submesh> meshManager;
 
-    RenderToy::MeshRequest request{
+    RenderToy::SubmeshRequest request{
         .path = "engine/test/Importer/test_data/simple_triangle.obj",
         .device = device.get()
     };
@@ -141,10 +141,10 @@ TEST_F(MeshResourceManagerTest, UnloadMesh){
     EXPECT_NE(handle, handle2);
 }
 
-TEST_F(MeshResourceManagerTest, LoadNonexistentFile){
-    ResourceManager<RenderToy::Mesh> meshManager;
+TEST_F(SubmeshResourceManagerTest, LoadNonexistentFile){
+    ResourceManager<RenderToy::Submesh> meshManager;
 
-    RenderToy::MeshRequest request{
+    RenderToy::SubmeshRequest request{
         .path = "nonexistent_mesh.obj",
         .device = device.get()
     };
@@ -153,14 +153,14 @@ TEST_F(MeshResourceManagerTest, LoadNonexistentFile){
 
     // Should return valid handle but invalid mesh
     ASSERT_TRUE(handle.isValid());
-    const RenderToy::Mesh* mesh = meshManager.get(handle);
+    const RenderToy::Submesh* mesh = meshManager.get(handle);
     EXPECT_FALSE(mesh->isValid());
 }
 
-TEST_F(MeshResourceManagerTest, LoadNullDevice){
-    ResourceManager<RenderToy::Mesh> meshManager;
+TEST_F(SubmeshResourceManagerTest, LoadNullDevice){
+    ResourceManager<RenderToy::Submesh> meshManager;
 
-    RenderToy::MeshRequest request{
+    RenderToy::SubmeshRequest request{
         .path = "engine/test/Importer/test_data/simple_triangle.obj",
         .device = nullptr  // Invalid device
     };
@@ -169,14 +169,14 @@ TEST_F(MeshResourceManagerTest, LoadNullDevice){
 
     // Should fail gracefully
     ASSERT_TRUE(handle.isValid());
-    const RenderToy::Mesh* mesh = meshManager.get(handle);
+    const RenderToy::Submesh* mesh = meshManager.get(handle);
     EXPECT_FALSE(mesh->isValid());
 }
 
-TEST_F(MeshResourceManagerTest, LoadUnsupportedFormat){
-    ResourceManager<RenderToy::Mesh> meshManager;
+TEST_F(SubmeshResourceManagerTest, LoadUnsupportedFormat){
+    ResourceManager<RenderToy::Submesh> meshManager;
 
-    RenderToy::MeshRequest request{
+    RenderToy::SubmeshRequest request{
         .path = "engine/test/Importer/test_data/empty.scene.toml",  // Not a mesh file
         .device = device.get()
     };
@@ -185,14 +185,14 @@ TEST_F(MeshResourceManagerTest, LoadUnsupportedFormat){
 
     // Should fail gracefully
     ASSERT_TRUE(handle.isValid());
-    const RenderToy::Mesh* mesh = meshManager.get(handle);
+    const RenderToy::Submesh* mesh = meshManager.get(handle);
     EXPECT_FALSE(mesh->isValid());
 }
 
-TEST_F(MeshResourceManagerTest, GPUBuffersAreValid){
-    ResourceManager<RenderToy::Mesh> meshManager;
+TEST_F(SubmeshResourceManagerTest, GPUBuffersAreValid){
+    ResourceManager<RenderToy::Submesh> meshManager;
 
-    RenderToy::MeshRequest request{
+    RenderToy::SubmeshRequest request{
         .path = "engine/test/Importer/test_data/simple_triangle.obj",
         .device = device.get()
     };
@@ -200,7 +200,7 @@ TEST_F(MeshResourceManagerTest, GPUBuffersAreValid){
     auto handle = meshManager.getOrLoad(request);
     ASSERT_TRUE(handle.isValid());
 
-    const RenderToy::Mesh* mesh = meshManager.get(handle);
+    const RenderToy::Submesh* mesh = meshManager.get(handle);
     ASSERT_NE(mesh, nullptr);
 
     // Check GPU buffers are valid

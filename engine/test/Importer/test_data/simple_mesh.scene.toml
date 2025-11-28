@@ -1,4 +1,4 @@
 [[entities]]
 name = "Cube"
-[entities.mesh]
-uri = "embedded:cube"
+[entities.renderObject]
+meshUri = "embedded:cube"

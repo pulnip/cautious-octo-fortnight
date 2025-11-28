@@ -47,10 +47,10 @@ TEST(SceneImporter, ImportSimpleMesh){
 
     const auto& entity = result->entities[0];
     EXPECT_EQ(entity.name, "Cube");
-    ASSERT_TRUE(entity.hasMesh());
+    ASSERT_TRUE(entity.hasRenderObject());
 
-    const auto& mesh = *entity.mesh;
-    EXPECT_EQ(mesh.uri, "embedded:cube");
+    const auto& renderObject = *entity.renderObject;
+    EXPECT_EQ(renderObject.meshUri, "embedded:cube");
 }
 
 // ============================================================================
@@ -67,7 +67,7 @@ TEST(SceneImporter, ImportComplexScene){
     const auto& player = result->entities[0];
     EXPECT_EQ(player.name, "Player");
     ASSERT_TRUE(player.hasTransform());
-    ASSERT_TRUE(player.hasMesh());
+    ASSERT_TRUE(player.hasRenderObject());
     ASSERT_TRUE(player.hasRigidbody());
     ASSERT_TRUE(player.hasBoxCollider());
 
@@ -75,13 +75,13 @@ TEST(SceneImporter, ImportComplexScene){
     EXPECT_EQ(player.transform->position, (Vec3{0.0f, 1.0f, 0.0f}));
 
     // Mesh
-    EXPECT_EQ(player.mesh->uri, "file:asset/player.rtmesh");
-    EXPECT_FALSE(player.mesh->materialOverrides.empty());
-    EXPECT_EQ(player.mesh->materialOverrides[0].baseColorTexture, "file:asset/player_diffuse.png");
-    EXPECT_EQ(player.mesh->materialOverrides[0].targetSlot, "body");
-    EXPECT_EQ(player.mesh->shader.modulePath, "");
-    EXPECT_EQ(player.mesh->shader.vertexFunction, "vs_main");
-    EXPECT_EQ(player.mesh->shader.fragmentFunction, "fs_pbr");
+    EXPECT_EQ(player.renderObject->meshUri, "file:asset/player.rtmesh");
+    EXPECT_FALSE(player.renderObject->materialOverrides.empty());
+    EXPECT_EQ(player.renderObject->materialOverrides[0].baseColorTexture, "file:asset/player_diffuse.png");
+    EXPECT_EQ(player.renderObject->materialOverrides[0].targetSlot, "body");
+    EXPECT_EQ(player.renderObject->shader.modulePath, "");
+    EXPECT_EQ(player.renderObject->shader.vertexFunction, "vs_main");
+    EXPECT_EQ(player.renderObject->shader.fragmentFunction, "fs_pbr");
 
     // Rigidbody
     EXPECT_EQ(player.rigidbody->velocity, zeros());
@@ -98,7 +98,7 @@ TEST(SceneImporter, ImportComplexScene){
     const auto& ground = result->entities[1];
     EXPECT_EQ(ground.name, "Ground");
     ASSERT_TRUE(ground.hasTransform());
-    ASSERT_TRUE(ground.hasMesh());
+    ASSERT_TRUE(ground.hasRenderObject());
     EXPECT_FALSE(ground.hasRigidbody());
 
     // Check Camera entity
@@ -142,20 +142,20 @@ TEST(SceneImporter, MeshDefaultShader){
     std::string tomlText = R"(
         [[entities]]
         name = "SimpleMesh"
-        [entities.mesh]
-        uri = "test.rtmesh"
+        [entities.renderObject]
+        meshUri = "test.rtmesh"
     )";
 
     auto result = importSceneFromString(tomlText);
 
     ASSERT_TRUE(result.has_value());
     const auto& entity = result->entities[0];
-    ASSERT_TRUE(entity.hasMesh());
+    ASSERT_TRUE(entity.hasRenderObject());
 
     // Shader should have default values if not specified
-    EXPECT_EQ(entity.mesh->shader.modulePath, "");
-    EXPECT_EQ(entity.mesh->shader.vertexFunction, "vs_main");
-    EXPECT_EQ(entity.mesh->shader.fragmentFunction, "fs_main");
+    EXPECT_EQ(entity.renderObject->shader.modulePath, "");
+    EXPECT_EQ(entity.renderObject->shader.vertexFunction, "vs_main");
+    EXPECT_EQ(entity.renderObject->shader.fragmentFunction, "fs_main");
 }
 
 // ============================================================================
@@ -223,8 +223,8 @@ TEST(SceneImporter, InvalidFieldType){
     std::string tomlText = R"(
         [[entities]]
         name = "BadEntity"
-        [entities.mesh]
-        uri = 123  # Should be string
+        [entities.renderObject]
+        meshUri = 123  # Should be string
     )";
 
     auto result = importSceneFromString(tomlText);
@@ -242,8 +242,8 @@ TEST(SceneImporter, EntityWithMultipleComponents){
         name = "ComplexEntity"
         [entities.transform]
         position = [5.0, 10.0, 15.0]
-        [entities.mesh]
-        uri = "test.rtmesh"
+        [entities.renderObject]
+        meshUri = "test.rtmesh"
         [entities.rigidbody]
         mass = 2.5
         useGravity = false
@@ -255,7 +255,7 @@ TEST(SceneImporter, EntityWithMultipleComponents){
     const auto& entity = result->entities[0];
 
     EXPECT_TRUE(entity.hasTransform());
-    EXPECT_TRUE(entity.hasMesh());
+    EXPECT_TRUE(entity.hasRenderObject());
     EXPECT_TRUE(entity.hasRigidbody());
     EXPECT_FALSE(entity.hasCamera());
     EXPECT_FALSE(entity.hasBoxCollider());
@@ -275,7 +275,7 @@ TEST(SceneImporter, EntityWithNoComponents){
 
     EXPECT_EQ(entity.name, "EmptyEntity");
     EXPECT_FALSE(entity.hasTransform());
-    EXPECT_FALSE(entity.hasMesh());
+    EXPECT_FALSE(entity.hasRenderObject());
     EXPECT_FALSE(entity.hasRigidbody());
 }
 

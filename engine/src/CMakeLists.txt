@@ -5,6 +5,7 @@ PRIVATE
 
 add_subdirectory(Content)
 add_subdirectory(Importer)
+add_subdirectory(Scene)
 add_subdirectory(ECS)
 add_subdirectory(Log)
 add_subdirectory(Platform)
@@ -18,6 +19,7 @@ PUBLIC
 PRIVATE
     RenderToy::Content
     RenderToy::Importer
+    RenderToy::Scene
     RenderToy::ECS
     RenderToy::Log
     RenderToy::Platform

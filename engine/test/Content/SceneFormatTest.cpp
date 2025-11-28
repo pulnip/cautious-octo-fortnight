@@ -37,7 +37,7 @@ TEST(SceneFormat, EntityDescriptor_Empty){
 
     EXPECT_EQ(entity.name, "EmptyEntity");
     EXPECT_FALSE(entity.hasTransform());
-    EXPECT_FALSE(entity.hasMesh());
+    EXPECT_FALSE(entity.hasRenderObject());
     EXPECT_FALSE(entity.hasRigidbody());
 }
 

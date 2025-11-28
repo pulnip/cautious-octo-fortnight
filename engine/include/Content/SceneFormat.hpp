@@ -32,9 +32,9 @@ namespace RenderToy
         std::string fragmentFunction;  // Fragment shader entry point
     };
 
-    // References a mesh asset and optionally overrides materials/shaders
-    struct MeshDescriptor {
-        std::string uri;  // "file:model.fbx" or "embedded:cube"
+    // Describes a RenderObject component (mesh + materials + shader)
+    struct RenderObjectDescriptor {
+        std::string meshUri;  // "file:model.fbx" or "embedded:cube"
         std::vector<MaterialOverride> materialOverrides;
         ShaderDescriptor shader;
     };
@@ -75,6 +75,7 @@ namespace RenderToy
 
     // Defines viewing parameters for rendering
     struct CameraDescriptor{
+        CameraType cameraType = CameraType::MainCamera;
         ProjectionType projection = ProjectionType::Perspective;
         double fov = 45.0f;          // Field of view in degrees (for perspective)
         double nearPlane = 0.1f;
@@ -101,7 +102,7 @@ namespace RenderToy
 
         // Optional components (present if entity has them)
         std::optional<TransformDescriptor> transform;
-        std::optional<MeshDescriptor> mesh;
+        std::optional<RenderObjectDescriptor> renderObject;
         std::optional<RigidbodyDescriptor> rigidbody;
         std::optional<BoxColliderDescriptor> boxCollider;
         std::optional<SphereColliderDescriptor> sphereCollider;
@@ -111,7 +112,7 @@ namespace RenderToy
 
         // Check if entity has a specific component
         inline bool hasTransform()      const{ return transform.has_value(); }
-        inline bool hasMesh()           const{ return mesh.has_value(); }
+        inline bool hasRenderObject()   const{ return renderObject.has_value(); }
         inline bool hasRigidbody()      const{ return rigidbody.has_value(); }
         inline bool hasBoxCollider()    const{ return boxCollider.has_value(); }
         inline bool hasSphereCollider() const{ return sphereCollider.has_value(); }

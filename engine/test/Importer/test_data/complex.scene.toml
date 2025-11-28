@@ -4,12 +4,12 @@ name = "Player"
 position = [0.0, 1.0, 0.0]
 rotation = [0.0, 0.0, 0.0, 1.0]
 scale = [1.0, 1.0, 1.0]
-[entities.mesh]
-uri = "file:asset/player.rtmesh"
-    [[entities.mesh.materialOverride]]
+[entities.renderObject]
+meshUri = "file:asset/player.rtmesh"
+    [[entities.renderObject.materialOverride]]
     baseColorTexture = "file:asset/player_diffuse.png"
     targetSlot = "body"
-    [entities.mesh.shader]
+    [entities.renderObject.shader]
     modulePath = ""
     vertexFunction = "vs_main"
     fragmentFunction = "fs_pbr"
@@ -30,8 +30,8 @@ name = "Ground"
 position = [0.0, 0.0, 0.0]
 rotation = [0.0, 0.0, 0.0, 1.0]
 scale = [100.0, 1.0, 100.0]
-[entities.mesh]
-uri = "embedded:cube"
+[entities.renderObject]
+meshUri = "embedded:cube"
 
 [[entities]]
 name = "MainCamera"

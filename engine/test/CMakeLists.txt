@@ -3,6 +3,7 @@ add_executable(RenderToyEngineTest
     Content/MeshFormatTest.cpp
     Importer/SceneImporterTest.cpp
     Importer/MeshImporterTest.cpp
+    Scene/SceneLoaderTest.cpp
     ECS/ComponentTypeRegistryTest.cpp
     ECS/EntityRegistryTest.cpp
     Resource/ResourceManagerTest.cpp

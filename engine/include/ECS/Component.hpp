@@ -31,9 +31,9 @@ namespace RenderToy
     );
     DEFINE_COMPONENT(RenderObject,
         float alpha;
-        UUID mesh;
-        UUID materialSet;
-        ShaderHandle shaderHandle;
+        MeshHandle mesh;
+        MaterialSetHandle materialSet;
+        ShaderHandle shader;
     );
     DEFINE_COMPONENT(ScriptObject,
         Script handle;

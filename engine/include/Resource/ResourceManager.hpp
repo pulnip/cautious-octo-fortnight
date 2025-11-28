@@ -40,6 +40,26 @@ namespace RenderToy
             return handle;
         }
 
+        /**
+         * Insert an already-created resource into the manager
+         * Useful when resources are created manually (e.g., SceneLoader)
+         *
+         * @param key Unique key for this resource
+         * @param resource Resource to insert (will be moved)
+         * @return Handle to the inserted resource
+         */
+        Handle insert(const Key& key, T&& resource){
+            // Check if already exists
+            if(auto it = keyToHandle.find(key); it != keyToHandle.end()){
+                return it->second;
+            }
+
+            auto handle = pool.push(std::move(resource));
+            keyToHandle.emplace(key, handle);
+            handleToKey.emplace(handle, key);
+            return handle;
+        }
+
         T*       get(Handle handle)      { return &pool[handle]; }
         const T* get(Handle handle) const{ return &pool[handle]; }
 

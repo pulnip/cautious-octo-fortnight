@@ -6,13 +6,15 @@
 
 namespace RenderToy
 {
-    // CPU-side mesh resource
-    // Holds references to GPU vertex and index buffers
-    struct Mesh{
+    // CPU-side submesh resource
+    // Represents a single drawable unit with vertex/index buffers
+    // A complete mesh (e.g., car.gltf) may contain multiple submeshes
+    struct Submesh{
         RHIBufferHandle vertexBuffer;  // GPU vertex buffer
         RHIBufferHandle indexBuffer;   // GPU index buffer
         uint32_t vertexCount = 0;
         uint32_t indexCount = 0;
+        uint32_t vertexStride = 0;     // Added: stride for vertex data
         RHIVertexLayout vertexLayout = {
             .elements = nullptr,
             .elementCount = 0

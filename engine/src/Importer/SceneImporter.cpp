@@ -118,14 +118,14 @@ namespace
         return desc;
     }
 
-    std::optional<MeshDescriptor> parseMesh(const toml::table& table){
-        MeshDescriptor desc;
+    std::optional<RenderObjectDescriptor> parseRenderObject(const toml::table& table){
+        RenderObjectDescriptor desc;
 
-        auto uri = readOptional<std::string>(table, "uri");
+        auto uri = readOptional<std::string>(table, "meshUri");
         if(!uri)
             return std::nullopt;
 
-        desc.uri = *uri;
+        desc.meshUri = *uri;
 
         // Parse material overrides
         if(auto matArray = table["materialOverride"].as_array()){
@@ -233,10 +233,10 @@ namespace
             entity.transform = *result;
         }
 
-        if(auto meshTable = entityTable["mesh"].as_table()){
-            auto result = parseMesh(*meshTable);
+        if(auto renderObjectTable = entityTable["renderObject"].as_table()){
+            auto result = parseRenderObject(*renderObjectTable);
             if(!result) return std::nullopt;
-            entity.mesh = *result;
+            entity.renderObject = *result;
         }
 
         if(auto rigidbodyTable = entityTable["rigidbody"].as_table()){
