@@ -6,70 +6,102 @@
 
 namespace RenderToy
 {
-    union Vec2{
-        float v[2];
-        struct{ float x, y; };
+    struct Vec2{
+        float x, y;
 
-        inline auto operator[](size_t i)->float&{ return v[i]; }
-        inline const float& operator[](size_t i) const{ return v[i]; }
+        constexpr Vec2():x{0}, y{0}{}
+        constexpr Vec2(float x, float y):x{x}, y{y} {}
+
+        constexpr float& operator[](size_t i){ 
+            if(i == 0) return x;
+            return y;
+        }
+        constexpr const float& operator[](size_t i) const{ 
+            if(i == 0) return x;
+            return y;
+        }
     }; static_assert(std::is_trivially_copyable_v<Vec2>);
-    union Vec3{
-        float v[3];
-        struct{ float x, y, z; };
-        struct{ float r, g, b; };
 
-        inline auto operator[](size_t i)->float&{ return v[i]; }
-        inline const float& operator[](size_t i) const{ return v[i]; }
+    struct Vec3{
+        float x, y, z;
+
+        constexpr Vec3():x{0}, y{0}, z{0} {}
+        constexpr Vec3(float x, float y, float z):x{x}, y{y}, z{z} {}
+
+        constexpr float& operator[](size_t i){
+            if(i == 0) return x;
+            if(i == 1) return y;
+            return z;
+        }
+        constexpr const float& operator[](size_t i) const{
+            if(i == 0) return x;
+            if(i == 1) return y;
+            return z;
+        }
     }; static_assert(std::is_trivially_copyable_v<Vec3>);
-    union Vec4{
-        float v[4];
-        struct{ float x, y, z, w; };
-        struct{ float r, g, b, a; };
 
-        inline auto operator[](size_t i)->float&{ return v[i]; }
-        inline const float& operator[](size_t i) const{ return v[i]; }
+    struct Vec4{
+        float x, y, z, w;
+
+        constexpr Vec4():x{0}, y{0}, z{0}, w{0} {}
+        constexpr Vec4(float x, float y, float z, float w) 
+            :x{x}, y{y}, z{z}, w{w} {}
+
+        constexpr float& operator[](size_t i){
+            if(i == 0) return x;
+            if(i == 1) return y;
+            if(i == 2) return z;
+            return w;
+        }
+        constexpr const float& operator[](size_t i) const{
+            if(i == 0) return x;
+            if(i == 1) return y;
+            if(i == 2) return z;
+            return w;
+        }
     }; static_assert(std::is_trivially_copyable_v<Vec4>);
 
+    // row major
     using Mat4 = std::array<Vec4, 4>;
     static_assert(std::is_trivially_copyable_v<Mat4>);
 
-    constexpr auto asVec3(Vec2 v2, float z=0.0f){
-        return Vec3{.x=v2.x, .y=v2.y, .z=z};
+    inline constexpr auto asVec3(Vec2 v2, float z=0.0f){
+        return Vec3{v2.x, v2.y, z};
     }
-    constexpr auto asVec4(Vec3 v3, float w=0.0f){
-        return Vec4{.x=v3.x, .y=v3.y, .z=v3.z, .w=w};
+    inline constexpr auto asVec4(Vec3 v3, float w=0.0f){
+        return Vec4{v3.x, v3.y, v3.z, w};
     }
-    constexpr auto asVec3(Vec4 v4){
-        return Vec3{.x=v4.x, .y=v4.y, .z=v4.z};
-    }
-
-    constexpr auto operator+(Vec2 lhs, Vec2 rhs){
-        return Vec2{.x=lhs.x+rhs.x, .y=lhs.y+rhs.y};
-    }
-    constexpr auto operator-(Vec2 lhs, Vec2 rhs){
-        return Vec2{.x=lhs.x-rhs.x, .y=lhs.y-rhs.y};
-    }
-    constexpr auto operator-(Vec2 v){
-        return Vec2{.x=-v.x, .y=-v.y};
-    }
-    constexpr auto operator*(Vec2 v, float f){
-        return Vec2{.x=v.x*f, .y=v.y*f};
-    }
-    constexpr auto operator*(float f, Vec2 v){
-        return Vec2{.x=f*v.x, .y=f*v.y};
-    }
-    constexpr auto operator/(Vec2 v, float f){
-        return Vec2{.x=v.x/f, .y=v.y/f};
+    inline constexpr auto asVec3(Vec4 v4){
+        return Vec3{v4.x, v4.y, v4.z};
     }
 
-    constexpr auto operator==(Vec2 lhs, Vec2 rhs){
+    inline constexpr auto operator+(Vec2 lhs, Vec2 rhs){
+        return Vec2{lhs.x+rhs.x, lhs.y+rhs.y};
+    }
+    inline constexpr auto operator-(Vec2 lhs, Vec2 rhs){
+        return Vec2{lhs.x-rhs.x, lhs.y-rhs.y};
+    }
+    inline constexpr auto operator-(Vec2 v){
+        return Vec2{-v.x, -v.y};
+    }
+    inline constexpr auto operator*(Vec2 v, float f){
+        return Vec2{v.x*f, v.y*f};
+    }
+    inline constexpr auto operator*(float f, Vec2 v){
+        return Vec2{f*v.x, f*v.y};
+    }
+    inline constexpr auto operator/(Vec2 v, float f){
+        return Vec2{v.x/f, v.y/f};
+    }
+
+    inline constexpr auto operator==(Vec2 lhs, Vec2 rhs){
         return lhs.x==rhs.x && lhs.y==rhs.y;
     }
 
-    constexpr auto dot(Vec2 lhs, Vec2 rhs){
+    inline constexpr auto dot(Vec2 lhs, Vec2 rhs){
         return lhs.x*rhs.x + lhs.y*rhs.y;
     }
-    constexpr auto norm_squared(Vec2 v){
+    inline constexpr auto norm_squared(Vec2 v){
         return dot(v, v);
     }
     inline auto norm(Vec2 v){
@@ -78,90 +110,90 @@ namespace RenderToy
     inline auto normalize(Vec2 v){
         return v / norm(v);
     }
-    constexpr auto cross(Vec2 lhs, Vec2 rhs){
+    inline constexpr auto cross(Vec2 lhs, Vec2 rhs){
         return lhs.x*rhs.y - lhs.y*rhs.x;
     }
 
-    constexpr auto zeros(){
-        return Vec3{.x=0.0f, .y=0.0f, .z=0.0f}; }
-    constexpr auto ones(){
-        return Vec3{.x=1.0f, .y=1.0f, .z=1.0f}; }
-    constexpr auto unitX(){
-        return Vec3{.x=1.0f, .y=0.0f, .z=0.0f}; }
-    constexpr auto unitY(){
-        return Vec3{.x=0.0f, .y=1.0f, .z=0.0f}; }
-    constexpr auto unitZ(){
-        return Vec3{.x=0.0f, .y=0.0f, .z=1.0f}; }
+    inline constexpr auto zeros(){
+        return Vec3{0.0f, 0.0f, 0.0f}; }
+    inline constexpr auto ones(){
+        return Vec3{1.0f, 1.0f, 1.0f}; }
+    inline constexpr auto unitX(){
+        return Vec3{1.0f, 0.0f, 0.0f}; }
+    inline constexpr auto unitY(){
+        return Vec3{0.0f, 1.0f, 0.0f}; }
+    inline constexpr auto unitZ(){
+        return Vec3{0.0f, 0.0f, 1.0f}; }
 
-    constexpr auto unitMat(){
+    inline constexpr auto unitMat(){
         return Mat4{
-            Vec4{.x=1.0f, .y=0.0f, .z=0.0f, .w=0.0f},
-            Vec4{.x=0.0f, .y=1.0f, .z=0.0f, .w=0.0f},
-            Vec4{.x=0.0f, .y=0.0f, .z=1.0f, .w=0.0f},
-            Vec4{.x=0.0f, .y=0.0f, .z=0.0f, .w=1.0f}
+            Vec4{1.0f, 0.0f, 0.0f, 0.0f},
+            Vec4{0.0f, 1.0f, 0.0f, 0.0f},
+            Vec4{0.0f, 0.0f, 1.0f, 0.0f},
+            Vec4{0.0f, 0.0f, 0.0f, 1.0f}
         };
     }
 
-    constexpr auto operator+(Vec3 lhs, Vec3 rhs){
-        return Vec3{.x=lhs.x+rhs.x, .y=lhs.y+rhs.y, .z=lhs.z+rhs.z};
+    inline constexpr auto operator+(Vec3 lhs, Vec3 rhs){
+        return Vec3{lhs.x+rhs.x, lhs.y+rhs.y, lhs.z+rhs.z};
     }
-    constexpr auto operator+=(Vec3& lhs, Vec3 rhs)->Vec3&{
+    inline constexpr Vec3& operator+=(Vec3& lhs, Vec3 rhs){
         lhs.x += rhs.x;
         lhs.y += rhs.y;
         lhs.z += rhs.z;
         return lhs;
     }
-    constexpr auto operator-(Vec3 v){
-        return Vec3{.x=-v.x, .y=-v.y, .z=-v.z};
+    inline constexpr auto operator-(Vec3 v){
+        return Vec3{-v.x, -v.y, -v.z};
     }
-    constexpr auto operator-(Vec3 lhs, Vec3 rhs){
-        return Vec3{.x=lhs.x-rhs.x, .y=lhs.y-rhs.y, .z=lhs.z-rhs.z};
+    inline constexpr auto operator-(Vec3 lhs, Vec3 rhs){
+        return Vec3{lhs.x-rhs.x, lhs.y-rhs.y, lhs.z-rhs.z};
     }
-    constexpr auto operator-=(Vec3& lhs, Vec3 rhs)->Vec3&{
+    inline constexpr Vec3& operator-=(Vec3& lhs, Vec3 rhs){
         lhs.x -= rhs.x;
         lhs.y -= rhs.y;
         lhs.z -= rhs.z;
         return lhs;
     }
-    constexpr auto operator*(Vec3 lhs, Vec3 rhs){
+    inline constexpr auto operator*(Vec3 lhs, Vec3 rhs){
         return Vec3{
-            .x = lhs.x * rhs.x,
-            .y = lhs.y * rhs.y,
-            .z = lhs.z * rhs.z
+            lhs.x * rhs.x,
+            lhs.y * rhs.y,
+            lhs.z * rhs.z
         };
     }
-    constexpr auto operator*(float f, Vec3 v){
+    inline constexpr auto operator*(float f, Vec3 v){
         return Vec3{
-            .x = f*v.x,
-            .y = f*v.y,
-            .z = f*v.z
+            f*v.x,
+            f*v.y,
+            f*v.z
         };
     }
-    constexpr auto operator*(Vec3 v, float f){
+    inline constexpr auto operator*(Vec3 v, float f){
         return f*v;
     }
-    constexpr auto operator*=(Vec3& v, float f)->Vec3&{
+    inline constexpr auto operator*=(Vec3& v, float f)->Vec3&{
         v.x *= f;
         v.y *= f;
         v.z *= f;
         return v;
     }
-    constexpr auto operator/(Vec3 v, float f){
+    inline constexpr auto operator/(Vec3 v, float f){
         return Vec3{
-            .x = v.x/f,
-            .y = v.y/f,
-            .z = v.z/f
+            v.x/f,
+            v.y/f,
+            v.z/f
         };
     }
 
-    constexpr auto operator==(Vec3 lhs, Vec3 rhs){
+    inline constexpr auto operator==(Vec3 lhs, Vec3 rhs){
         return lhs.x==rhs.x && lhs.y==rhs.y && lhs.z==rhs.z;
     }
 
-    constexpr auto dot(Vec3 lhs, Vec3 rhs){
+    inline constexpr auto dot(Vec3 lhs, Vec3 rhs){
         return lhs.x*rhs.x + lhs.y*rhs.y + lhs.z*rhs.z;
     }
-    constexpr auto norm_squared(Vec3 v){
+    inline constexpr auto norm_squared(Vec3 v){
         return dot(v, v);
     }
     inline auto norm(Vec3 v){
@@ -170,46 +202,50 @@ namespace RenderToy
     inline auto normalize(Vec3 v){
         return v / norm(v);
     }
-    constexpr auto cross(Vec3 lhs, Vec3 rhs){
+    inline constexpr auto cross(Vec3 lhs, Vec3 rhs){
         return Vec3{
-            .x = lhs.y*rhs.z - lhs.z*rhs.y,
-            .y = lhs.z*rhs.x - lhs.x*rhs.z,
-            .z = lhs.x*rhs.y - lhs.y*rhs.x
+            lhs.y*rhs.z - lhs.z*rhs.y,
+            lhs.z*rhs.x - lhs.x*rhs.z,
+            lhs.x*rhs.y - lhs.y*rhs.x
         };
     }
 
-    constexpr auto unitQuat(){
-        return Vec4{.x=0, .y=0, .z=0, .w=1};
+    inline constexpr auto unitQuat(){
+        return Vec4{0.0f, 0.0f, 0.0f, 1.0f};
     }
-    constexpr auto conjugate(Vec4 quat){
-        return Vec4{
-            .x = -quat.x,
-            .y = -quat.y,
-            .z = -quat.z,
-            .w =  quat.w
+    inline constexpr auto transpose(const Mat4 mat){
+        return Mat4{
+            Vec4{mat[0][0], mat[1][0], mat[2][0], mat[3][0]},
+            Vec4{mat[0][1], mat[1][1], mat[2][1], mat[3][1]},
+            Vec4{mat[0][2], mat[1][2], mat[2][2], mat[3][2]},
+            Vec4{mat[0][3], mat[1][3], mat[2][3], mat[3][3]}
         };
     }
 
-    constexpr auto operator*(Vec4 lhs, Vec4 rhs){
+    inline constexpr auto conjugate(Vec4 quat){
+        return Vec4{-quat.x, -quat.y, -quat.z, quat.w};
+    }
+
+    inline constexpr auto operator*(Vec4 lhs, Vec4 rhs){
         return Vec4{
-            .x = lhs.w*rhs.x + lhs.x*rhs.w + lhs.y*rhs.z - lhs.z*rhs.y,
-            .y = lhs.w*rhs.y - lhs.x*rhs.z + lhs.y*rhs.w + lhs.z*rhs.x,
-            .z = lhs.w*rhs.z + lhs.x*rhs.y - lhs.y*rhs.x + lhs.z*rhs.w,
-            .w = lhs.w*rhs.w - lhs.x*rhs.x - lhs.y*rhs.y - lhs.z*rhs.z
+            lhs.w*rhs.x + lhs.x*rhs.w + lhs.y*rhs.z - lhs.z*rhs.y,
+            lhs.w*rhs.y - lhs.x*rhs.z + lhs.y*rhs.w + lhs.z*rhs.x,
+            lhs.w*rhs.z + lhs.x*rhs.y - lhs.y*rhs.x + lhs.z*rhs.w,
+            lhs.w*rhs.w - lhs.x*rhs.x - lhs.y*rhs.y - lhs.z*rhs.z
         };
     }
-    constexpr auto operator/(Vec4 lhs, float rhs){
+    inline constexpr auto operator/(Vec4 lhs, float rhs){
         return Vec4{
-            .x = lhs.x/rhs,
-            .y = lhs.y/rhs,
-            .z = lhs.z/rhs,
-            .w = lhs.w/rhs,
+            lhs.x/rhs,
+            lhs.y/rhs,
+            lhs.z/rhs,
+            lhs.w/rhs,
         };
     }
-    constexpr auto dot(Vec4 lhs, Vec4 rhs){
-        return lhs.x*rhs.x + lhs.y*rhs.y + lhs.z*rhs.z + rhs.w*rhs.w;
+    inline constexpr auto dot(Vec4 lhs, Vec4 rhs){
+        return lhs.x*rhs.x + lhs.y*rhs.y + lhs.z*rhs.z + lhs.w*rhs.w;
     }
-    constexpr auto norm_squared(Vec4 v){
+    inline constexpr auto norm_squared(Vec4 v){
         return dot(v, v);
     }
     inline auto norm(Vec4 v){
@@ -258,28 +294,28 @@ namespace RenderToy
     inline auto rotateX(float theta){
         float half = theta * 0.5f;
         return Vec4{
-            .x = std::sinf(half),
-            .y = 0.0f,
-            .z = 0.0f,
-            .w = std::cosf(half)
+            std::sin(half),
+            0.0f,
+            0.0f,
+            std::cos(half)
         };
     }
     inline auto rotateY(float theta){
         float half = theta * 0.5f;
         return Vec4{
-            .x = 0.0f,
-            .y = std::sinf(half),
-            .z = 0.0f,
-            .w = std::cosf(half)
+            0.0f,
+            std::sin(half),
+            0.0f,
+            std::cos(half)
         };
     }
     inline auto rotateZ(float theta){
         float half = theta * 0.5f;
         return Vec4{
-            .x = 0.0f,
-            .y = 0.0f,
-            .z = std::sinf(half),
-            .w = std::cosf(half)
+            0.0f,
+            0.0f,
+            std::sin(half),
+            std::cos(half)
         };
     }
     inline auto yaw(Vec4 quat){
@@ -290,44 +326,148 @@ namespace RenderToy
     }
     inline auto axisAngle(Vec3 axis, float radian){
         auto half = radian / 2;
-        float s = std::sinf(half);
+        float s = std::sin(half);
         return Vec4{
-            .x = axis.x * s,
-            .y = axis.y * s,
-            .z = axis.z * s,
-            .w = std::cosf(half)
+            axis.x * s,
+            axis.y * s,
+            axis.z * s,
+            std::cos(half)
         };
     }
     inline auto rotate(Vec3 v, Vec4 quat){
         return asVec3(quat * asVec4(v) * conjugate(quat));
     }
 
-    constexpr auto right(Vec4 quat){
-        auto e_x = Vec4{.x=1, .y=0, .z=0, .w=0};
+    inline constexpr auto right(Vec4 quat){
+        auto e_x = Vec4{1.0f, 0.0f, 0.0f, 0.0f};
         auto vec = quat * e_x * conjugate(quat);
-        return Vec3{.x=vec.x, .y=vec.y, .z=vec.z };
+        return asVec3(vec);
     }
-    constexpr auto ground_right(Vec4 quat){
+    inline constexpr auto ground_right(Vec4 quat){
         auto f = right(quat);
         return f - dot(f, unitY())*unitY();
     }
-    constexpr auto up(Vec4 quat){
-        auto e_y = Vec4{.x=0, .y=1, .z=0, .w=0};
+    inline constexpr auto up(Vec4 quat){
+        auto e_y = Vec4{0.0f, 1.0f, 0.0f, 0.0f};
         auto vec = quat * e_y * conjugate(quat);
-        return Vec3{.x=vec.x, .y=vec.y, .z=vec.z };
+        return asVec3(vec);
     }
-    constexpr auto forward(Vec4 quat){
-        auto e_z = Vec4{.x=0, .y=0, .z=1, .w=0};
+    inline constexpr auto forward(Vec4 quat){
+        auto e_z = Vec4{0.0f, 0.0f, 1.0f, 0.0f};
         auto vec = quat * e_z * conjugate(quat);
-        return Vec3{.x=vec.x, .y=vec.y, .z=vec.z };
+        return asVec3(vec);
     }
-    constexpr auto ground_forward(Vec4 quat){
+    inline constexpr auto ground_forward(Vec4 quat){
         auto f = forward(quat);
         return f - dot(f, unitY())*unitY();
     }
 
-    constexpr auto operator==(Vec4 lhs, Vec4 rhs){
+    inline constexpr auto operator==(Vec4 lhs, Vec4 rhs){
         return lhs.x==rhs.x && lhs.y==rhs.y &&
                lhs.z==rhs.z && lhs.w==rhs.w;
+    }
+
+    inline constexpr auto operator*(const Mat4& lhs, const Mat4& rhs){
+        auto rhs_t = transpose(rhs);
+
+        return Mat4{
+            Vec4{dot(lhs[0], rhs_t[0]), dot(lhs[0], rhs_t[1]), dot(lhs[0], rhs_t[2]), dot(lhs[0], rhs_t[3])},
+            Vec4{dot(lhs[1], rhs_t[0]), dot(lhs[1], rhs_t[1]), dot(lhs[1], rhs_t[2]), dot(lhs[1], rhs_t[3])},
+            Vec4{dot(lhs[2], rhs_t[0]), dot(lhs[2], rhs_t[1]), dot(lhs[2], rhs_t[2]), dot(lhs[2], rhs_t[3])},
+            Vec4{dot(lhs[3], rhs_t[0]), dot(lhs[3], rhs_t[1]), dot(lhs[3], rhs_t[2]), dot(lhs[3], rhs_t[3])},
+        };
+    }
+
+    // expected multiplication form
+    inline constexpr auto operator*(const Mat4& lhs, const Vec4& rhs){
+        return Vec4{
+            dot(lhs[0], rhs),
+            dot(lhs[1], rhs),
+            dot(lhs[2], rhs),
+            dot(lhs[3], rhs),
+        };
+    }
+
+    inline constexpr auto perspective(
+        float fovY, float aspect, float nearZ, float farZ
+    ){
+        auto tanHalfFovY = std::tan(0.5f * fovY);
+        auto dz = nearZ - farZ;
+
+        auto e00 = 1.0f / (aspect*tanHalfFovY);
+        auto e11 = 1.0f / tanHalfFovY;
+        auto e22 = farZ / dz;
+        auto e23 = (farZ*nearZ) / dz;
+
+        return Mat4{
+            Vec4{ e00, 0.0f,  0.0f, 0.0f},
+            Vec4{0.0f,  e11,  0.0f, 0.0f},
+            Vec4{0.0f, 0.0f,   e22,  e23},
+            Vec4{0.0f, 0.0f, -1.0f, 0.0f}
+        };
+    }
+
+    inline auto lookAt(Vec3 eye, Vec3 target, Vec3 up){
+        auto f = normalize(target - eye);
+        auto r = normalize(cross(f, up));
+        auto u = cross(r, f);
+
+        return Mat4{
+            Vec4{ r.x,  r.y,  r.z, -dot(r, eye)},
+            Vec4{ u.x,  u.y,  u.z, -dot(u, eye)},
+            Vec4{-f.x, -f.y, -f.z,  dot(f, eye)},
+            Vec4{0.0f, 0.0f, 0.0f,         1.0f}
+        };
+    }
+
+    inline auto rotateXMat(float theta){
+        float c = std::cos(theta);
+        float s = std::sin(theta);
+        return Mat4{
+            Vec4{1.0f, 0.0f, 0.0f, 0.0f},
+            Vec4{0.0f,    c,   -s, 0.0f},
+            Vec4{0.0f,    s,    c, 0.0f},
+            Vec4{0.0f, 0.0f, 0.0f, 1.0f}
+        };
+    }
+
+    inline auto rotateYMat(float theta){
+        float c = std::cos(theta);
+        float s = std::sin(theta);
+        return Mat4{
+            Vec4{   c, 0.0f,    s, 0.0f},
+            Vec4{0.0f, 1.0f, 0.0f, 0.0f},
+            Vec4{  -s, 0.0f,    c, 0.0f},
+            Vec4{0.0f, 0.0f, 0.0f, 1.0f}
+        };
+    }
+
+    inline auto rotateZMat(float theta){
+        float c = std::cos(theta);
+        float s = std::sin(theta);
+        return Mat4{
+            Vec4{   c,   -s, 0.0f, 0.0f},
+            Vec4{   s,    c, 0.0f, 0.0f},
+            Vec4{0.0f, 0.0f, 1.0f, 0.0f},
+            Vec4{0.0f, 0.0f, 0.0f, 1.0f}
+        };
+    }
+
+    inline constexpr auto translateMat(Vec3 t){
+        return Mat4{
+            Vec4{1.0f, 0.0f, 0.0f, t.x},
+            Vec4{0.0f, 1.0f, 0.0f, t.y},
+            Vec4{0.0f, 0.0f, 1.0f, t.z},
+            Vec4{0.0f, 0.0f, 0.0f, 1.0f}
+        };
+    }
+
+    inline constexpr auto scaleMat(Vec3 s){
+        return Mat4{
+            Vec4{ s.x, 0.0f, 0.0f, 0.0f},
+            Vec4{0.0f,  s.y, 0.0f, 0.0f},
+            Vec4{0.0f, 0.0f,  s.z, 0.0f},
+            Vec4{0.0f, 0.0f, 0.0f, 1.0f}
+        };
     }
 }

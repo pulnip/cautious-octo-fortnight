@@ -12,9 +12,9 @@ TEST(ArchetypeView, TrivialSize){
 
 TEST(ArchetypeView, ComplexSize){
     Vec4 testColors[] = {
-        {{0.1, 0.2, 0.3, 0.5}},
-        {{0.4, 0.3, 0.9, 1.0}},
-        {{0.5, 0.1, 0.0, 0.5}}
+        {0.1, 0.2, 0.3, 0.5},
+        {0.4, 0.3, 0.9, 1.0},
+        {0.5, 0.1, 0.0, 0.5}
     };
     EntityRegistry registry;
     for(size_t i=0; i<3; ++i){
@@ -66,9 +66,9 @@ TEST(ArchetypeView, ComplexSize){
 TEST(ArchetypeView, SimpleQuery){
     EntityRegistry registry;
     Vec4 testColors[] = {
-        {{0.1, 0.2, 0.3, 0.5}},
-        {{0.3, 0.7, 0.2, 0.1}},
-        {{0.6, 0.9, 0.1, 0.2}}
+        {0.1, 0.2, 0.3, 0.5},
+        {0.3, 0.7, 0.2, 0.1},
+        {0.6, 0.9, 0.1, 0.2}
     };
 
     for(size_t i=0; i<3; ++i){
@@ -91,9 +91,9 @@ TEST(ArchetypeView, SimpleQuery){
 TEST(ArchetypeView, ComplexQuery){
     EntityRegistry registry;
     Vec4 testColors[] = {
-        {{0.1, 0.2, 0.3, 0.5}},
-        {{0.4, 0.3, 0.9, 1.0}},
-        {{0.5, 0.1, 0.0, 0.5}}
+        {0.1, 0.2, 0.3, 0.5},
+        {0.4, 0.3, 0.9, 1.0},
+        {0.5, 0.1, 0.0, 0.5}
     };
 
     for(size_t i=0; i<3; ++i){
@@ -127,9 +127,9 @@ TEST(ArchetypeView, ComplexQuery){
 TEST(ArchetypeView, EmplaceOrder){
     EntityRegistry registry;
     Vec4 testColors[] = {
-        {{0.1, 0.2, 0.3, 0.5}},
-        {{0.4, 0.3, 0.9, 1.0}},
-        {{0.5, 0.1, 0.0, 0.5}}
+        {0.1, 0.2, 0.3, 0.5},
+        {0.4, 0.3, 0.9, 1.0},
+        {0.5, 0.1, 0.0, 0.5}
     };
 
     for(size_t i=0; i<3; ++i){
@@ -181,9 +181,9 @@ TEST(ArchetypeView, EmplaceOrder){
 TEST(ArchetypeView, AppendComponent){
     EntityRegistry registry;
     Vec4 testColors[] = {
-        {{0.1, 0.2, 0.3, 0.5}},
-        {{0.4, 0.3, 0.9, 1.0}},
-        {{0.5, 0.1, 0.0, 0.5}}
+        {0.1, 0.2, 0.3, 0.5},
+        {0.4, 0.3, 0.9, 1.0},
+        {0.5, 0.1, 0.0, 0.5}
     };
     auto colorTest = [&testColors](Vec4 color){
         for(size_t i=0; i<3; ++i){
@@ -242,9 +242,9 @@ TEST(ArchetypeView, AppendComponent){
 TEST(ArchetypeView, RemoveComponent){
     EntityRegistry registry;
     Vec4 testColors[] = {
-        {{0.1, 0.2, 0.3, 0.5}},
-        {{0.4, 0.3, 0.9, 1.0}},
-        {{0.5, 0.1, 0.0, 0.5}}
+        {0.1, 0.2, 0.3, 0.5},
+        {0.4, 0.3, 0.9, 1.0},
+        {0.5, 0.1, 0.0, 0.5}
     };
     auto colorTest = [&testColors](Vec4 color){
         for(size_t i=0; i<3; ++i){

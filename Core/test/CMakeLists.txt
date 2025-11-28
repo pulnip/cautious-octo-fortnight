@@ -1,5 +1,6 @@
 add_executable(RenderToyCoreTest
     dynamic_vector.cpp
+    math_test.cpp
 )
 
 target_link_libraries(RenderToyCoreTest

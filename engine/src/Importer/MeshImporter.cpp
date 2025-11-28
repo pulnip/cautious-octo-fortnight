@@ -213,6 +213,17 @@ namespace RenderToy
         }
 
         MeshData meshData;
+        Vec3 globalMin{
+            std::numeric_limits<float>::max(),
+            std::numeric_limits<float>::max(),
+            std::numeric_limits<float>::max()
+        };
+        Vec3 globalMax{
+            std::numeric_limits<float>::lowest(),
+            std::numeric_limits<float>::lowest(),
+            std::numeric_limits<float>::lowest()
+        };
+        MeshData meshData;
         Vec3 globalMin{std::numeric_limits<float>::max()};
         Vec3 globalMax{std::numeric_limits<float>::lowest()};
 
