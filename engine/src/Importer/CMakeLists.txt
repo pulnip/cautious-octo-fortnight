@@ -1,5 +1,6 @@
 add_library(RenderToyImporter STATIC
     SceneImporter.cpp
+    MeshImporter.cpp
 )
 
 target_include_directories(RenderToyImporter
@@ -11,6 +12,7 @@ target_link_libraries(RenderToyImporter
 PUBLIC
     RenderToy::Content
     tomlplusplus::tomlplusplus
+    assimp::assimp
 )
 
 add_library(RenderToy::Importer ALIAS RenderToyImporter)
