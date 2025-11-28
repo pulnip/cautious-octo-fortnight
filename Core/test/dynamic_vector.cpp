@@ -86,7 +86,7 @@ TEST(dynamic_vector, Iterator){
 
 // Composite chunk (int, float, char[4]) tests
 TEST(dynamic_vector, CompositeChunkSingleElement){
-    std::size_t chunkSize = sizeof(int) + sizeof(float) + 4 * sizeof(char);
+    size_t chunkSize = sizeof(int) + sizeof(float) + 4 * sizeof(char);
     dynamic_vector vec(chunkSize);
     vec.emplace(42, 2.718f, 'h', 'e', 'l', 'o');
     ASSERT_EQ(vec.size(), 1u);
@@ -105,7 +105,7 @@ TEST(dynamic_vector, CompositeChunkSingleElement){
 }
 
 TEST(dynamic_vector, CompositeChunkMultipleElements){
-    std::size_t chunkSize = sizeof(int) + sizeof(float) + 4 * sizeof(char);
+    size_t chunkSize = sizeof(int) + sizeof(float) + 4 * sizeof(char);
     dynamic_vector vec(chunkSize);
     vec.reserve(3);
     vec.emplace(1, 1.1f, 'a', 'b', 'c', 'd');
@@ -113,7 +113,7 @@ TEST(dynamic_vector, CompositeChunkMultipleElements){
     vec.emplace(3, 3.3f, 'i', 'j', 'k', 'l');
     ASSERT_EQ(vec.size(), 3u);
 
-    for(std::size_t idx = 0; idx < vec.size(); ++idx){
+    for(size_t idx = 0; idx < vec.size(); ++idx){
         void* raw = vec[idx];
         int expected_i = static_cast<int>(idx) + 1;
         float expected_f = expected_i * 1.1f;
@@ -131,7 +131,7 @@ TEST(dynamic_vector, CompositeChunkMultipleElements){
 }
 
 TEST(dynamic_vector, CompositeChunkSwapRemove){
-    std::size_t chunkSize = sizeof(int) + sizeof(float) + 4 * sizeof(char);
+    size_t chunkSize = sizeof(int) + sizeof(float) + 4 * sizeof(char);
     dynamic_vector vec(chunkSize);
     vec.emplace(10, 10.1f, 'x', 'y', 'z', 'w');
     vec.emplace(20, 20.2f, 'u', 'v', 'w', 'x');
@@ -155,7 +155,7 @@ TEST(dynamic_vector, CompositeChunkSwapRemove){
 }
 
 TEST(dynamic_vector, PointerEmplaceAllNonNull){
-    std::size_t chunkSize = sizeof(int) * 2;
+    size_t chunkSize = sizeof(int) * 2;
     dynamic_vector vec(chunkSize);
     int a = 100, b = 200;
     vec.emplace(&a, &b);
@@ -167,7 +167,7 @@ TEST(dynamic_vector, PointerEmplaceAllNonNull){
 }
 
 TEST(dynamic_vector, PointerEmplaceSkipFirst){
-    std::size_t chunkSize = sizeof(int) * 2;
+    size_t chunkSize = sizeof(int) * 2;
     dynamic_vector vec(chunkSize);
     int a = 100, b = 200;
     vec.emplace(&a, nullptr, &b, nullptr);
@@ -179,7 +179,7 @@ TEST(dynamic_vector, PointerEmplaceSkipFirst){
 }
 
 TEST(dynamic_vector, OptionalEmplaceAllPresent){
-    std::size_t chunkSize = sizeof(int) * 2;
+    size_t chunkSize = sizeof(int) * 2;
     dynamic_vector vec(chunkSize);
     std::optional<int> a = 300, b = 400;
     vec.emplace(a, b);
@@ -191,7 +191,7 @@ TEST(dynamic_vector, OptionalEmplaceAllPresent){
 }
 
 TEST(dynamic_vector, OptionalEmplaceSkipSecond){
-    std::size_t chunkSize = sizeof(int) * 2;
+    size_t chunkSize = sizeof(int) * 2;
     dynamic_vector vec(chunkSize);
     std::optional<int> a = 300, b = 400, x = std::nullopt;
     vec.emplace(x, a, x, b);

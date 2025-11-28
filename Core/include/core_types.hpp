@@ -4,5 +4,5 @@
 
 namespace RenderToy
 {
-    using Index = std::size_t;
+    using Index = size_t;
 }

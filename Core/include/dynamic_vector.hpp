@@ -60,16 +60,16 @@ namespace RenderToy
     }
 
     template<typename... T>
-    constexpr std::size_t sum_sizeof(){
-        return (std::size_t{0} + ... + sizeof(T));
+    constexpr size_t sum_sizeof(){
+        return (size_t{0} + ... + sizeof(T));
     }
 
     class dynamic_vector{
     private:
         void* mem = nullptr;
-        const std::size_t CHUNK_SIZE;
-        std::size_t size_ = 0;
-        std::size_t cap_ = 0;
+        const size_t CHUNK_SIZE;
+        size_t size_ = 0;
+        size_t cap_ = 0;
 
     public:
         dynamic_vector() = delete;
@@ -77,9 +77,9 @@ namespace RenderToy
             if(mem != nullptr)
                 free(mem);
         }
-        dynamic_vector(std::size_t CHUNK_SIZE)
+        dynamic_vector(size_t CHUNK_SIZE)
         :CHUNK_SIZE(CHUNK_SIZE){}
-        dynamic_vector(std::size_t CHUNK_SIZE, std::size_t initial_cap)
+        dynamic_vector(size_t CHUNK_SIZE, size_t initial_cap)
         :CHUNK_SIZE(CHUNK_SIZE), cap_(initial_cap){
             if(CHUNK_SIZE != 0 && initial_cap != 0)
                 mem = malloc(CHUNK_SIZE*initial_cap);
@@ -95,13 +95,13 @@ namespace RenderToy
         class iterator{
         private:
             void* const mem;
-            const std::size_t CHUNK_SIZE;
+            const size_t CHUNK_SIZE;
             Index pos;
 
             friend const_iterator;
 
         public:
-            iterator(void* mem, std::size_t CHUNK_SIZE, Index pos)
+            iterator(void* mem, size_t CHUNK_SIZE, Index pos)
             :mem(mem), CHUNK_SIZE(CHUNK_SIZE), pos(pos){}
             iterator(const iterator&) = default;
             iterator(iterator&&) = default;
@@ -139,13 +139,13 @@ namespace RenderToy
         class const_iterator{
         private:
             void* mem;
-            std::size_t CHUNK_SIZE;
+            size_t CHUNK_SIZE;
             Index pos;
 
             friend iterator;
 
         public:
-            const_iterator(void* mem, std::size_t CHUNK_SIZE, Index pos){}
+            const_iterator(void* mem, size_t CHUNK_SIZE, Index pos){}
             const_iterator(const const_iterator&) = default;
             const_iterator(const_iterator&&) = default;
             const_iterator& operator=(const const_iterator&) = default;
@@ -197,15 +197,15 @@ namespace RenderToy
         auto cbegin() const{ return const_iterator(mem, CHUNK_SIZE,     0); }
         auto   cend() const{ return const_iterator(mem, CHUNK_SIZE, size_); }
 
-        std::size_t     size() const{ return size_; }
-        std::size_t capacity() const{ return  cap_; }
-        void resize(std::size_t new_size){
+        size_t     size() const{ return size_; }
+        size_t capacity() const{ return  cap_; }
+        void resize(size_t new_size){
             if(new_size > cap_){
                 reserve(std::bit_ceil(new_size));
             }
             size_ = new_size;
         }
-        void reserve(std::size_t new_cap){
+        void reserve(size_t new_cap){
             if(new_cap <= cap_)
                 return;
 
@@ -226,7 +226,7 @@ namespace RenderToy
                 (std::is_trivially_copyable_v<std::remove_reference_t<T>> && ...),
                 "Component must be trivially copyable!"
             );
-            std::size_t totalSize = (std::size_t{0} + ... + sizeof(T));
+            size_t totalSize = (size_t{0} + ... + sizeof(T));
             assert(totalSize == CHUNK_SIZE);
             resize(size_ + 1);
 
@@ -239,7 +239,7 @@ namespace RenderToy
                 (std::is_trivially_copyable_v<std::remove_pointer_t<T>> && ...),
                 "Component must be trivially copyable!"
             );
-            std::size_t totalSize = (std::size_t{0} + ... +
+            size_t totalSize = (size_t{0} + ... +
                 (std::is_null_pointer_v<T> ? 0 : sizeof(std::remove_pointer_t<T>)));
             assert(totalSize == CHUNK_SIZE);
             resize(size_ + 1);
@@ -253,7 +253,7 @@ namespace RenderToy
                 (std::is_trivially_copyable_v<remove_optional_t<std::remove_cvref_t<T>>> && ...),
                 "Component must be trivially copyable!"
             );
-            std::size_t totalSize = (std::size_t{0} + ... +
+            size_t totalSize = (size_t{0} + ... +
                 (t.has_value() ? sizeof(remove_optional_t<std::remove_cvref_t<T>>) : 0));
             assert(totalSize == CHUNK_SIZE);
             resize(size_ + 1);

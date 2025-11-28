@@ -210,8 +210,8 @@ namespace RenderToy
         return bit + (t1.has_value() ? bit_of<U>() : 0);
     }
 
-    constexpr std::size_t size_of(ArchetypeBit bit){
-        std::size_t size = sizeof(EntityID);
+    constexpr size_t size_of(ArchetypeBit bit){
+        size_t size = sizeof(EntityID);
         #define X(type, name) \
             if(bit & name##_BIT) \
                 size += sizeof(type);
@@ -221,11 +221,11 @@ namespace RenderToy
     }
 
     template<typename T>
-    constexpr std::size_t offset_of(ArchetypeBit bit){
+    constexpr size_t offset_of(ArchetypeBit bit){
         if(!isSubset(bit_of<T>(), bit))
             return -1;
 
-        std::size_t offset = sizeof(EntityID);
+        size_t offset = sizeof(EntityID);
         #define X(type, name) \
             if(std::same_as<T, type>) \
                 return offset; \
@@ -252,6 +252,4 @@ namespace RenderToy
     constexpr std::string name_of(){
         return name_of(bit_of<T>());
     }
-
-    constexpr auto x = bits_of<Transform>();
 }

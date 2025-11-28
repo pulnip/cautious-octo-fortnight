@@ -10,7 +10,7 @@ namespace{
         auto operator<=>(const MockResourceKey&) const = default;
     };
     struct MockResourceKeyHash{
-        inline std::size_t operator()(const MockResourceKey& key) const noexcept{
+        inline size_t operator()(const MockResourceKey& key) const noexcept{
             return 0;
         }
     };

@@ -24,10 +24,10 @@ namespace RenderToy
     const void* ptrAdd(const void* ptr){
         return static_cast<const uint8_t*>(ptr) + sizeof(T);
     }
-    inline void* ptrAdd(void* ptr, std::size_t nbyte){
+    inline void* ptrAdd(void* ptr, size_t nbyte){
         return static_cast<uint8_t*>(ptr) + nbyte;
     }
-    inline const void* ptrAdd(const void* ptr, std::size_t nbyte){
+    inline const void* ptrAdd(const void* ptr, size_t nbyte){
         return static_cast<const uint8_t*>(ptr) + nbyte;
     }
 
@@ -46,7 +46,7 @@ namespace RenderToy
         dst = *static_cast<const T*>(src);
         return ptrAdd<T>(src);
     }
-    inline void* ptrWrite(void* dst, const void* src, std::size_t size){
+    inline void* ptrWrite(void* dst, const void* src, size_t size){
         std::memcpy(dst, src, size);
         return ptrAdd(dst, size);
     }

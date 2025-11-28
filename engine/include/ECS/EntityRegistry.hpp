@@ -140,8 +140,8 @@ namespace RenderToy
         auto cbegin() const noexcept{ return const_iterator{map.begin(), map.end()}; }
         auto   cend() const noexcept{ return sentinel{}; }
 
-        std::size_t size() const noexcept{
-            std::size_t size = 0;
+        size_t size() const noexcept{
+            size_t size = 0;
             for(auto it = map.cbegin(); it != map.cend(); ++it){
                 if(isSubset(required_bit, it->first))
                     size += it->second.size();
@@ -379,7 +379,7 @@ namespace RenderToy
             // 2. remove old chunk
             old_vec.swap_remove(info.chunkIndex);
 
-            return std::tuple<std::size_t, dynamic_vector&>{new_index, old_vec};
+            return std::tuple<size_t, dynamic_vector&>{new_index, old_vec};
         }
         template<typename T>
         auto moveChunk(EntityInfo& info){

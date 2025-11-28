@@ -7,7 +7,7 @@
 namespace RenderToy
 {
     struct ComponentInfo{
-        std::size_t size;
+        size_t size;
     };
 
     class ComponentTypeRegistry{
@@ -16,7 +16,7 @@ namespace RenderToy
         std::unordered_map<ArchetypeBit, ComponentInfo> bitToInfo;
 
     public:
-        void registerComponent(const std::type_info& ti, std::size_t size){
+        void registerComponent(const std::type_info& ti, size_t size){
             if(typeToBit.contains(ti))
                 return;
 
@@ -53,7 +53,7 @@ namespace RenderToy
             return (... | bit_of<Ts>());
         }
 
-        std::size_t size_of(ArchetypeBit bit) const{
+        size_t size_of(ArchetypeBit bit) const{
             auto size = RenderToy::size_of(bit);
             for(const auto& [rc_bit, info]: bitToInfo){
                 if(rc_bit & bit)
@@ -63,7 +63,7 @@ namespace RenderToy
         }
 
         template<typename T>
-        std::size_t offset_of(ArchetypeBit bit) const{
+        size_t offset_of(ArchetypeBit bit) const{
             const auto t_bit = bit_of<T>();
             if(!isSubset(t_bit, bit))
                 return -1;

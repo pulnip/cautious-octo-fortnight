@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <format>
 #include <new>
 #include <ranges>
 #include <vector>
@@ -17,7 +18,7 @@ namespace RenderToy
 
         struct Slot{
             alignas(T) std::byte storage[sizeof(T)];
-            std::uint32_t generation = 0;
+            uint32_t generation = 0;
 
             T* get(){ return std::launder(reinterpret_cast<T*>(&storage)); }
             const T* get() const{ return std::launder(reinterpret_cast<const T*>(&storage)); }
@@ -44,7 +45,7 @@ namespace RenderToy
         }
 
         Handle push(T&& t){
-            Index freeIndex = std::numeric_limits<std::uint32_t>::max();
+            Index freeIndex = std::numeric_limits<uint32_t>::max();
 
             if(freeIndexes.size() > 0){
                 freeIndex = freeIndexes[freeIndexes.size() - 1];
@@ -121,7 +122,7 @@ namespace RenderToy
             return *slots[handle.index].get();
         }
 
-        void reserve(std::size_t size){
+        void reserve(size_t size){
             if(size <= slots.size())
                 return;
             for(auto i=slots.size(); i<size; ++i)
@@ -129,10 +130,10 @@ namespace RenderToy
             slots.resize(size);
         }
 
-        std::size_t size() const{
+        size_t size() const{
             return slots.size() - freeIndexes.size();
         }
-        std::size_t capacity() const{
+        size_t capacity() const{
             return slots.size();
         }
     };

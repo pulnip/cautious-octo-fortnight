@@ -4,5 +4,5 @@
 
 namespace RenderToy
 {
-    using EntityID = std::uint32_t;
+    using EntityID = uint32_t;
 }

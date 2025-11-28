@@ -2,8 +2,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <limits>
-#include <utility>
 #include "core_types.hpp"
 
 namespace RenderToy
@@ -11,7 +11,7 @@ namespace RenderToy
     template<typename T>
     struct generic_handle{
         Index index = std::numeric_limits<Index>::max();
-        std::uint32_t generation = 0;
+        uint32_t generation = 0;
 
         bool isValid() const{
             return index != std::numeric_limits<Index>::max();
@@ -24,8 +24,8 @@ namespace RenderToy
 
     template<typename T>
     struct generic_handleHash{
-        std::size_t operator()(const generic_handle<T>& handle) const {
-            return std::hash<Index>()(handle.index) ^ (std::hash<std::uint32_t>()(handle.generation) << 1);
+        size_t operator()(const generic_handle<T>& handle) const{
+            return std::hash<Index>()(handle.index) ^ (std::hash<uint32_t>()(handle.generation) << 1);
         }
     };
 }

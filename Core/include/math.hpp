@@ -10,24 +10,24 @@ namespace RenderToy
         float v[2];
         struct{ float x, y; };
 
-        inline auto operator[](std::size_t i)->float&{ return v[i]; }
-        inline const float& operator[](std::size_t i) const{ return v[i]; }
+        inline auto operator[](size_t i)->float&{ return v[i]; }
+        inline const float& operator[](size_t i) const{ return v[i]; }
     }; static_assert(std::is_trivially_copyable_v<Vec2>);
     union Vec3{
         float v[3];
         struct{ float x, y, z; };
         struct{ float r, g, b; };
 
-        inline auto operator[](std::size_t i)->float&{ return v[i]; }
-        inline const float& operator[](std::size_t i) const{ return v[i]; }
+        inline auto operator[](size_t i)->float&{ return v[i]; }
+        inline const float& operator[](size_t i) const{ return v[i]; }
     }; static_assert(std::is_trivially_copyable_v<Vec3>);
     union Vec4{
         float v[4];
         struct{ float x, y, z, w; };
         struct{ float r, g, b, a; };
 
-        inline auto operator[](std::size_t i)->float&{ return v[i]; }
-        inline const float& operator[](std::size_t i) const{ return v[i]; }
+        inline auto operator[](size_t i)->float&{ return v[i]; }
+        inline const float& operator[](size_t i) const{ return v[i]; }
     }; static_assert(std::is_trivially_copyable_v<Vec4>);
 
     using Mat4 = std::array<Vec4, 4>;
