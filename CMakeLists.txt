@@ -30,6 +30,15 @@ if(NOT SDL3_FOUND)
     FetchContent_MakeAvailable(SDL3)
 endif()
 
+# stb - header-only image loading library
+FetchContent_Declare(
+    stb
+    GIT_REPOSITORY "https://github.com/nothings/stb.git"
+    GIT_TAG "master"
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(stb)
+
 include(cmake/sanitizer.cmake)
 
 if(RENDERTOY_ENABLE_TEST)
