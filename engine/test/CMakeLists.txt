@@ -1,4 +1,5 @@
 add_executable(RenderToyEngineTest
+    Content/SceneFormatTest.cpp
     ECS/ComponentTypeRegistryTest.cpp
     ECS/EntityRegistryTest.cpp
     Resource/ResourceManagerTest.cpp
