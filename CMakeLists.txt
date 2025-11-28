@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(RenderToy LANGUAGES C CXX VERSION "0.0.1")
+# Enable Swift on macOS for Metal RHI backend
+if(APPLE)
+    project(RenderToy LANGUAGES C CXX Swift VERSION "0.0.1")
+else()
+    project(RenderToy LANGUAGES C CXX VERSION "0.0.1")
+endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

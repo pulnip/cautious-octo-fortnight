@@ -3,6 +3,8 @@ add_library(RenderToyEngine STATIC)
 target_include_directories(RenderToyEngine
 PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
+PRIVATE
+    "${stb_SOURCE_DIR}"
 )
 
 add_subdirectory(src)

@@ -1,12 +1,13 @@
 target_sources(RenderToyEngine
 PRIVATE
-    engine.cpp
+    Engine.cpp
 )
 
 add_subdirectory(ECS)
 add_subdirectory(Log)
 add_subdirectory(Platform)
 add_subdirectory(Time)
+add_subdirectory(RHI)
 
 target_link_libraries(RenderToyEngine
 PUBLIC
@@ -16,4 +17,5 @@ PRIVATE
     RenderToy::Log
     RenderToy::Platform
     RenderToy::Time
+    RenderToy::RHI
 )

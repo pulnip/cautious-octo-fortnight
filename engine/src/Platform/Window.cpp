@@ -56,6 +56,16 @@ namespace RenderToy
 
         this->impl->window = window;
 
+    #if defined(__APPLE__)
+        // Create Metal view for rendering
+        impl->view = SDL_Metal_CreateView(window);
+        if (!impl->view) {
+            LOG_ERROR(LOG_CORE, "Failed to create Metal view: {}", SDL_GetError());
+            SDL_DestroyWindow(window);
+            return false;
+        }
+    #endif
+
         return true;
     }
 
