@@ -31,44 +31,54 @@ if(NOT SDL3_FOUND)
 endif()
 
 # stb - header-only image loading library
-FetchContent_Declare(
-    stb
-    GIT_REPOSITORY "https://github.com/nothings/stb.git"
-    GIT_TAG "master"
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(stb)
+find_package(stb QUIET)
+if(NOT stb_FOUND)
+    FetchContent_Declare(
+        stb
+        GIT_REPOSITORY "https://github.com/nothings/stb.git"
+        GIT_TAG "master"
+        GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(stb)
+endif()
 
 # tomlplusplus - TOML parser library
-FetchContent_Declare(
-    tomlplusplus
-    GIT_REPOSITORY "https://github.com/marzer/tomlplusplus.git"
-    GIT_TAG "v3.4.0"
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(tomlplusplus)
+find_package(tomlplusplus QUIET)
+if(NOT tomlplusplus_FOUND)
+    FetchContent_Declare(
+        tomlplusplus
+        GIT_REPOSITORY "https://github.com/marzer/tomlplusplus.git"
+        GIT_TAG "v3.4.0"
+        GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(tomlplusplus)
+endif()
 
 # assimp - 3D model loading library
-FetchContent_Declare(
-    assimp
-    GIT_REPOSITORY "https://github.com/assimp/assimp.git"
-    GIT_TAG "v6.0.2"
-    GIT_SHALLOW TRUE
-)
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
-set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "" FORCE)
-set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(assimp)
+find_package(assimp QUIET)
+if(NOT assimp_FOUND)
+    FetchContent_Declare(
+        assimp
+        GIT_REPOSITORY "https://github.com/assimp/assimp.git"
+        GIT_TAG "v6.0.2"
+        GIT_SHALLOW TRUE
+    )
+    set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_INSTALL OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
+    set(ASSIMP_BUILD_MMD_IMPORTER ON CACHE BOOL "" FORCE)  # PMX/PMD support
+    FetchContent_MakeAvailable(assimp)
+endif()
 
 include(cmake/sanitizer.cmake)
 
 if(RENDERTOY_ENABLE_TEST)
     find_package(GTest QUIET)
-    if(NOT gtest_FOUND)
+    if(NOT GTest_FOUND)
         FetchContent_Declare(
             GTest
             GIT_REPOSITORY "https://github.com/google/googletest.git"
